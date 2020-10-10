@@ -6,5 +6,6 @@
 .*.sw[nop]
 *~
 
-/build/
-.build/
+/.build/
+/.vscode/
+/Package.resolved
