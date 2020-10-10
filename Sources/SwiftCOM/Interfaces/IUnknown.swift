@@ -10,9 +10,10 @@ import WinSDK
 public class IUnknown {
   public var pUnk: UnsafeMutablePointer<WinSDK.IUnknown>?
 
+  /// Interface ID
   public class var IID: IID { IID_IUnknown }
 
-  internal required init(pUnk pointer: UnsafeMutableRawPointer?) {
+  public required init(pUnk pointer: UnsafeMutableRawPointer?) {
     self.pUnk = pointer?.bindMemory(to: WinSDK.IUnknown.self, capacity: 1)
   }
 
