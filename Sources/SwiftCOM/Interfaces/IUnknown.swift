@@ -7,12 +7,17 @@
 
 import WinSDK
 
+/// Enables clients to get pointers to other interfaces on a given object through
+/// the `QueryInterface` method, and manage the existence of the object through
+/// the `AddRef` and `Release` methods.
 public class IUnknown {
   public var pUnk: UnsafeMutablePointer<WinSDK.IUnknown>?
 
   /// Interface ID
   public class var IID: IID { IID_IUnknown }
 
+  /// Converts the unmanaged `IUnknown` pointer to a managed instance.  The pointee
+  /// is expected to be passed in with a reference count of 1.
   public required init(pUnk pointer: UnsafeMutableRawPointer?) {
     self.pUnk = pointer?.bindMemory(to: WinSDK.IUnknown.self, capacity: 1)
   }
