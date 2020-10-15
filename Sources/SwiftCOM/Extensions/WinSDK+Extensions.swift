@@ -19,6 +19,8 @@ internal var E_FAIL: HRESULT {
 // public API.  These really should be vended by WinSDK.
 public typealias REFIID = UnsafePointer<IID>
 public typealias REFCLSID = UnsafePointer<CLSID>
+public typealias REFPROPVARIANT = UnsafePointer<PROPVARIANT>
+public typealias REFPROPERTYKEY = UnsafePointer<PROPERTYKEY>
 
 // winnt.h
 @_transparent
