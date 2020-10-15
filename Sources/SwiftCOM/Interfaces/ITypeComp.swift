@@ -10,7 +10,7 @@ import WinSDK
 /// Provides a fast way to access information that compilers need when binding to
 /// and instantiating structures and interfaces. Binding is the process of
 /// mapping names to types and type members.
-public class ITypeComp: IUnknown {
+open class ITypeComp: IUnknown {
   public override class var IID: IID { IID_ITypeComp }
 
   /// Maps a name to a member of a type, or binds global variables and functions
