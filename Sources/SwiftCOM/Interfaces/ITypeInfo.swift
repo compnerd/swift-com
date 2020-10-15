@@ -7,7 +7,7 @@
 
 import WinSDK
 
-public class ITypeInfo: IUnknown {
+open class ITypeInfo: IUnknown {
   public override class var IID: IID { IID_ITypeInfo }
 
   // TODO(compnerd) create a managed copy of TYPEATTR

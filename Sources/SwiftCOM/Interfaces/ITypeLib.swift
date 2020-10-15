@@ -7,7 +7,7 @@
 
 import WinSDK
 
-public class ITypeLib: IUnknown {
+open class ITypeLib: IUnknown {
   public override class var IID: IID { IID_ITypeLib }
 
   /// Provides the number of type descriptions that are in a type library.
