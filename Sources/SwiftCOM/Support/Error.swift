@@ -8,7 +8,7 @@
 import WinSDK
 
 public struct COMError: Error {
-  let hr: HRESULT
+  public let hr: HRESULT
 
   public init(hr: HRESULT) {
     self.hr = hr
