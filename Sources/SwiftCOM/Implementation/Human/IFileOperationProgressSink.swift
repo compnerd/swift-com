@@ -9,11 +9,11 @@ import WinSDK
 
 extension IFileOperationProgressSink {
   fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?) -> IFileOperationProgressSink? {
-    return unsafeBitCast(pUnk, to: AnyObject?.self) as? IFileOperationProgressSink
+    return (unsafeBitCast(pUnk, to: AnyObject?.self) as? IFileOperationProgressSink)?.instance.instance
   }
 }
 
-private let vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
+private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
   QueryInterface: {
     guard let pUnk = $0, let riid = $1, let ppvObject = $2 else {
       return E_INVALIDARG
@@ -150,21 +150,18 @@ private let vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
 open class IFileOperationProgressSink: IUnknown {
   override public class var IID: IID { IID_IFileOperationProgressSink }
 
-  private let pThis: UnsafeMutablePointer<WinSDK.IFileOperationProgressSink>
+  fileprivate struct Storage {
+    var `class`: WinSDK.IFileOperationProgressSink
+    unowned var instance: IFileOperationProgressSink?
+  }
+  fileprivate var instance: Storage
 
   required public init(pUnk pointer: UnsafeMutableRawPointer? = nil) {
-    self.pThis =
-        UnsafeMutablePointer<WinSDK.IFileOperationProgressSink>.allocate(capacity: 1)
-    self.pThis.pointee.lpVtbl =
-        UnsafeMutablePointer<WinSDK.IFileOperationProgressSinkVtbl>.allocate(capacity: 1)
-    self.pThis.pointee.lpVtbl.pointee = vtable
-
-    super.init(pUnk: self.pThis)
-  }
-
-  deinit {
-    self.pThis.pointee.lpVtbl.deallocate()
-    self.pThis.deallocate()
+    self.instance = withUnsafeMutablePointer(to: &vtable) {
+      Storage(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
+    }
+    super.init(pUnk: withUnsafeMutablePointer(to: &instance) { $0 })
+    self.instance.instance = self
   }
 
   open func FinishOperations(_ hrResult: HRESULT) -> HRESULT {
