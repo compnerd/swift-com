@@ -42,7 +42,7 @@ public class IStream: IUnknown {
     var cbRead: ULARGE_INTEGER = ULARGE_INTEGER()
     var cbWritten: ULARGE_INTEGER = ULARGE_INTEGER()
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.CopyTo(pThis, pstm.raw, cb,
+        pThis.pointee.lpVtbl.pointee.CopyTo(pThis, RawPointer(pstm), cb,
                                             &cbRead, &cbWritten)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return (cbRead, cbWritten)
