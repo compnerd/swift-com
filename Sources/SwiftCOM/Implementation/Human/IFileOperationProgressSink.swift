@@ -8,8 +8,10 @@
 import WinSDK
 
 extension IFileOperationProgressSink {
-  fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?) -> IFileOperationProgressSink? {
-    return (unsafeBitCast(pUnk, to: AnyObject?.self) as? IFileOperationProgressSink)?.instance.instance
+  fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?)
+      -> IFileOperationProgressSink? {
+    return pUnk?.assumingMemoryBound(to: IFileOperationProgressSink.Storage.self)
+              .pointee.pointer
   }
 }
 
@@ -27,12 +29,18 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
     return S_OK
   },
   AddRef: {
-    let _ = Unmanaged<IFileOperationProgressSink>.fromOpaque($0!).retain()
+    var instance = IFileOperationProgressSink.from($0)!
+    _ = withUnsafeMutablePointer(to: &instance) {
+      Unmanaged<IFileOperationProgressSink>.fromOpaque($0).retain()
+    }
     // TODO(compnerd) return new reference count
     return 0
   },
   Release: {
-    Unmanaged<IFileOperationProgressSink>.fromOpaque($0!).release()
+    var instance = IFileOperationProgressSink.from($0)!
+    withUnsafeMutablePointer(to: &instance) {
+      Unmanaged<IFileOperationProgressSink>.fromOpaque($0).release()
+    }
     // TODO(compnerd) return old reference count
     return 0
   },
@@ -153,7 +161,7 @@ open class IFileOperationProgressSink: IUnknown {
 
   fileprivate struct Storage {
     var `class`: WinSDK.IFileOperationProgressSink
-    unowned var instance: IFileOperationProgressSink?
+    unowned var pointer: IFileOperationProgressSink?
   }
   fileprivate var instance: Storage
 
@@ -162,7 +170,7 @@ open class IFileOperationProgressSink: IUnknown {
       Storage(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
     }
     super.init(pUnk: withUnsafeMutablePointer(to: &instance) { $0 })
-    self.instance.instance = self
+    self.instance.pointer = self
   }
 
   open func FinishOperations(_ hrResult: HRESULT) -> HRESULT {
