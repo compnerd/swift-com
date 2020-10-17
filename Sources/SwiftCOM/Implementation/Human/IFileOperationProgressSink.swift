@@ -13,6 +13,140 @@ extension IFileOperationProgressSink {
   }
 }
 
+let vtable = WinSDK.IFileOperationProgressSinkVtbl(
+  QueryInterface: {
+    guard let pUnk = $0, let riid = $1, let ppvObject = $2 else {
+      return E_INVALIDARG
+    }
+    guard riid.pointee == IFileOperationProgressSink.IID else {
+      ppvObject.pointee = nil
+      return E_NOINTERFACE
+    }
+    ppvObject.pointee = UnsafeMutableRawPointer(pUnk)
+    return S_OK
+  },
+  AddRef: {
+    let _ = Unmanaged<IFileOperationProgressSink>.fromOpaque($0!).retain()
+    // TODO(compnerd) return new reference count
+    return 0
+  },
+  Release: {
+    Unmanaged<IFileOperationProgressSink>.fromOpaque($0!).release()
+    // TODO(compnerd) return old reference count
+    return 0
+  },
+  StartOperations: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.StartOperations()
+  },
+  FinishOperations: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.FinishOperations($1)
+  },
+  PreRenameItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PreRenameItem($1, IShellItem(pUnk: $2),
+                              String(decodingCString: $3!, as: UTF16.self))
+  },
+  PostRenameItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PostRenameItem($1, IShellItem(pUnk: $2),
+                               String(decodingCString: $3!, as: UTF16.self),
+                               $4, IShellItem(pUnk: $5))
+  },
+  PreMoveItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PreMoveItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
+                            String(decodingCString: $4!, as: UTF16.self))
+  },
+  PostMoveItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PostMoveItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
+                             String(decodingCString: $4!, as: UTF16.self),
+                             $5, IShellItem(pUnk: $6))
+  },
+  PreCopyItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PreCopyItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
+                            String(decodingCString: $4!, as: UTF16.self))
+  },
+  PostCopyItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PostCopyItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
+                             String(decodingCString: $4!, as: UTF16.self),
+                             $5, IShellItem(pUnk: $6))
+  },
+  PreDeleteItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PreDeleteItem($1, IShellItem(pUnk: $2))
+  },
+  PostDeleteItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PostDeleteItem($1, IShellItem(pUnk: $2), $3,
+                               IShellItem(pUnk: $4))
+  },
+  PreNewItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PreNewItem($1, IShellItem(pUnk: $2),
+                           String(decodingCString: $3!, as: UTF16.self))
+  },
+  PostNewItem: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PostNewItem($1, IShellItem(pUnk: $2),
+                            String(decodingCString: $3!, as: UTF16.self),
+                            String(decodingCString: $4!, as: UTF16.self),
+                            $5, $6, IShellItem(pUnk: $7))
+  },
+  UpdateProgress: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.UpdateProgress($1, $2)
+  },
+  ResetTimer: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.ResetTimer()
+  },
+  PauseTimer: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.PauseTimer()
+  },
+  ResumeTimer: {
+    guard let self = IFileOperationProgressSink.from($0) else {
+      return E_INVALIDARG
+    }
+    return self.ResumeTimer()
+  }
+)
+
 open class IFileOperationProgressSink: IUnknown {
   override public class var IID: IID { IID_IFileOperationProgressSink }
 
@@ -23,150 +157,7 @@ open class IFileOperationProgressSink: IUnknown {
         UnsafeMutablePointer<WinSDK.IFileOperationProgressSink>.allocate(capacity: 1)
     self.pThis.pointee.lpVtbl =
         UnsafeMutablePointer<WinSDK.IFileOperationProgressSinkVtbl>.allocate(capacity: 1)
-    self.pThis.pointee.lpVtbl.pointee = WinSDK.IFileOperationProgressSinkVtbl(
-      QueryInterface: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        guard let iid = $1?.pointee, let ppv = $2 else { return E_INVALIDARG }
-        guard iid == IFileOperationProgressSink.IID else {
-          ppv.pointee = nil
-          return E_NOINTERFACE
-        }
-        ppv.pointee =
-            Unmanaged<IFileOperationProgressSink>.passRetained(instance)
-                .toOpaque()
-        return S_OK
-      },
-      AddRef: {
-        guard let pUnk = $0 else { return ULONG(E_INVALIDARG) }
-        _ = Unmanaged<IFileOperationProgressSink>.fromOpaque(pUnk).retain()
-        return ULONG(_getRetainCount(unsafeBitCast(pUnk, to: IFileOperationProgressSink.self)))
-      },
-      Release: {
-        guard let pUnk = $0 else { return ULONG(E_INVALIDARG) }
-        Unmanaged<IFileOperationProgressSink>.fromOpaque(pUnk).release()
-        return ULONG(_getRetainCount(unsafeBitCast(pUnk, to: IFileOperationProgressSink.self)))
-      },
-      StartOperations: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.StartOperations()
-      },
-      FinishOperations: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.FinishOperations($1)
-      },
-      PreRenameItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PreRenameItem($1, IShellItem(pUnk: $2),
-                                      String(decodingCString: $3!,
-                                             as: UTF16.self))
-      },
-      PostRenameItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PostRenameItem($1, IShellItem(pUnk: $2),
-                                       String(decodingCString: $3!,
-                                              as: UTF16.self),
-                                       $4, IShellItem(pUnk: $5))
-      },
-      PreMoveItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PreMoveItem($1, IShellItem(pUnk: $2),
-                                    IShellItem(pUnk: $3),
-                                    String(decodingCString: $4!, as: UTF16.self))
-      },
-      PostMoveItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PostMoveItem($1, IShellItem(pUnk: $2),
-                                     IShellItem(pUnk: $3),
-                                     String(decodingCString: $4!,
-                                            as: UTF16.self),
-                                     $5, IShellItem(pUnk: $6))
-      },
-      PreCopyItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PreCopyItem($1, IShellItem(pUnk: $2),
-                                    IShellItem(pUnk: $3),
-                                    String(decodingCString: $4!, as: UTF16.self))
-      },
-      PostCopyItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PostCopyItem($1, IShellItem(pUnk: $2),
-                                     IShellItem(pUnk: $3),
-                                     String(decodingCString: $4!,
-                                            as: UTF16.self),
-                                     $5, IShellItem(pUnk: $6))
-      },
-      PreDeleteItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PreDeleteItem($1, IShellItem(pUnk: $2))
-      },
-      PostDeleteItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PostDeleteItem($1, IShellItem(pUnk: $2), $3,
-                                       IShellItem(pUnk: $4))
-      },
-      PreNewItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PreNewItem($1, IShellItem(pUnk: $2),
-                                   String(decodingCString: $3!, as: UTF16.self))
-      },
-      PostNewItem: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PostNewItem($1, IShellItem(pUnk: $2),
-                                    String(decodingCString: $3!, as: UTF16.self),
-                                    String(decodingCString: $4!, as: UTF16.self),
-                                    $5, $6, IShellItem(pUnk: $7))
-      },
-      UpdateProgress: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.UpdateProgress($1, $2)
-      },
-      ResetTimer: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.ResetTimer()
-      },
-      PauseTimer: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.PauseTimer()
-      },
-      ResumeTimer: {
-        guard let instance = IFileOperationProgressSink.from($0) else {
-          return E_INVALIDARG
-        }
-        return instance.ResumeTimer()
-      }
-    )
+    self.pThis.pointee.lpVtbl.pointee = vtable
 
     super.init(pUnk: self.pThis)
   }
