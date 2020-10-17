@@ -7,14 +7,16 @@
 
 import WinSDK
 
+extension IFileOperationProgressSink {
+  fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?) -> IFileOperationProgressSink? {
+    return unsafeBitCast(pUnk, to: AnyObject?.self) as? IFileOperationProgressSink
+  }
+}
+
 open class IFileOperationProgressSink: IUnknown {
   override public class var IID: IID { IID_IFileOperationProgressSink }
 
   private let pThis: UnsafeMutablePointer<WinSDK.IFileOperationProgressSink>
-
-  static func from(_ pUnk: UnsafeMutableRawPointer?) -> IFileOperationProgressSink? {
-    return unsafeBitCast(pUnk, to: AnyObject?.self) as? IFileOperationProgressSink
-  }
 
   required public init(pUnk pointer: UnsafeMutableRawPointer? = nil) {
     self.pThis =
