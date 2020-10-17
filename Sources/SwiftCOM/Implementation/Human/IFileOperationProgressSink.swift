@@ -23,6 +23,7 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
       return E_NOINTERFACE
     }
     ppvObject.pointee = UnsafeMutableRawPointer(pUnk)
+    _ = pUnk.pointee.lpVtbl.pointee.AddRef(pUnk)
     return S_OK
   },
   AddRef: {
