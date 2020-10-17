@@ -36,7 +36,7 @@ public class IRunningObjectTable: IUnknown {
     // ascii version. As a result, `GetObject` is a macro which happens to
     // expand incorrectly to `GetObjectA` here.
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.GetObjectA(pThis, pmkObjectName.raw,
+        pThis.pointee.lpVtbl.pointee.GetObjectA(pThis, RawPointer(pmkObjectName),
                                                 &punkObject)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IUnknown(pUnk: punkObject)
@@ -51,7 +51,7 @@ public class IRunningObjectTable: IUnknown {
 
     var filetime: FILETIME = FILETIME()
     let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-                          .GetTimeOfLastChange(pThis, pmkObjectName.raw,
+                          .GetTimeOfLastChange(pThis, RawPointer(pmkObjectName),
                                                &filetime)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return filetime
@@ -64,7 +64,8 @@ public class IRunningObjectTable: IUnknown {
     let pThis =
         pUnk.bindMemory(to: WinSDK.IRunningObjectTable.self, capacity: 1)
 
-    return pThis.pointee.lpVtbl.pointee.IsRunning(pThis, pmkObjectName.raw) == S_OK
+    return pThis.pointee.lpVtbl.pointee.IsRunning(pThis,
+                                                  RawPointer(pmkObjectName)) == S_OK
   }
 
   public func NoteChangeTime(_ dwRegister: DWORD) throws -> FILETIME {
@@ -92,7 +93,8 @@ public class IRunningObjectTable: IUnknown {
     var dwRegister: DWORD = 0
     let hr: HRESULT =
         pThis.pointee.lpVtbl.pointee.Register(pThis, grfFlags, punkObject.pUnk,
-                                              pmkObjectName.raw, &dwRegister)
+                                              RawPointer(pmkObjectName),
+                                              &dwRegister)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return dwRegister
   }

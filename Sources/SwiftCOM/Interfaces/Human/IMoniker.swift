@@ -20,7 +20,8 @@ public class IMoniker: IPersistStream {
     var iid: IID = riidResult
     var pvResult: UnsafeMutableRawPointer?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.BindToObject(pThis, pbc.raw, pmkToLeft.raw,
+        pThis.pointee.lpVtbl.pointee.BindToObject(pThis, RawPointer(pbc),
+                                                  RawPointer(pmkToLeft),
                                                   &iid, &pvResult)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IUnknown(pUnk: pvResult)
@@ -35,7 +36,8 @@ public class IMoniker: IPersistStream {
 
     var pvObj: UnsafeMutableRawPointer?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.BindToObject(pThis, pbc.raw, pmkToLeft.raw,
+        pThis.pointee.lpVtbl.pointee.BindToObject(pThis, RawPointer(pbc),
+                                                  RawPointer(pmkToLeft),
                                                   &riid, &pvObj)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IUnknown(pUnk: pvObj)
@@ -49,7 +51,8 @@ public class IMoniker: IPersistStream {
 
     var pmkPrefix: UnsafeMutablePointer<WinSDK.IMoniker>?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.CommonPrefixWith(pThis, pmkOther.raw,
+        pThis.pointee.lpVtbl.pointee.CommonPrefixWith(pThis,
+                                                      RawPointer(pmkOther),
                                                       &pmkPrefix)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IMoniker(pUnk: pmkPrefix)
@@ -64,7 +67,7 @@ public class IMoniker: IPersistStream {
 
     var pmkComposite: UnsafeMutablePointer<WinSDK.IMoniker>?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.ComposeWith(pThis, pmkRight.raw,
+        pThis.pointee.lpVtbl.pointee.ComposeWith(pThis, RawPointer(pmkRight),
                                                  WindowsBool(fOnlyIfNotGeneric == true),
                                                  &pmkComposite)
     guard hr == S_OK else { throw COMError(hr: hr) }
@@ -97,8 +100,8 @@ public class IMoniker: IPersistStream {
 
     var pszDisplayName: LPOLESTR?
     let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-                          .GetDisplayName(pThis, pbc.raw, pmkToLeft?.raw,
-                                          &pszDisplayName)
+                          .GetDisplayName(pThis, RawPointer(pbc),
+                                          RawPointer(pmkToLeft), &pszDisplayName)
     guard hr == S_OK else { throw COMError(hr: hr) }
 
     defer { try? malloc.Free(pszDisplayName) }
@@ -114,8 +117,8 @@ public class IMoniker: IPersistStream {
 
     var FileTime: FILETIME = FILETIME()
     let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-                          .GetTimeOfLastChange(pThis, pbc.raw, pmkToLeft.raw,
-                                               &FileTime)
+                          .GetTimeOfLastChange(pThis, RawPointer(pbc),
+                                               RawPointer(pmkToLeft), &FileTime)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return FileTime
   }
@@ -150,7 +153,8 @@ public class IMoniker: IPersistStream {
     }
     let pThis = pUnk.bindMemory(to: WinSDK.IMoniker.self, capacity: 1)
 
-    let hr: HRESULT = pThis.pointee.lpVtbl.pointee.IsEqual(pThis, pmkOtherMoniker.raw)
+    let hr: HRESULT =
+        pThis.pointee.lpVtbl.pointee.IsEqual(pThis, RawPointer(pmkOtherMoniker))
     switch hr {
     case S_OK: return true
     case S_FALSE: return false
@@ -166,8 +170,9 @@ public class IMoniker: IPersistStream {
     let pThis = pUnk.bindMemory(to: WinSDK.IMoniker.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.IsRunning(pThis, pbc.raw, pmkToLeft?.raw,
-                                               pmkNewlyRunning?.raw)
+        pThis.pointee.lpVtbl.pointee.IsRunning(pThis, RawPointer(pbc),
+                                               RawPointer(pmkToLeft),
+                                               RawPointer(pmkNewlyRunning))
     switch hr {
     case S_OK: return true
     case S_FALSE: return false
@@ -204,8 +209,8 @@ public class IMoniker: IPersistStream {
     var olestr: [OLECHAR] = pszDisplayName.wide
     let hr: HRESULT = olestr.withUnsafeMutableBufferPointer {
       pThis.pointee.lpVtbl.pointee
-          .ParseDisplayName(pThis, pbc.raw, pmkToLeft.raw, $0.baseAddress,
-                            &chEaten, &pmkOut)
+          .ParseDisplayName(pThis, RawPointer(pbc), RawPointer(pmkToLeft),
+                            $0.baseAddress, &chEaten, &pmkOut)
     }
     guard hr == S_OK else { throw COMError(hr: hr) }
     return (Int(chEaten), IMoniker(pUnk: pmkOut))
@@ -218,11 +223,13 @@ public class IMoniker: IPersistStream {
     }
     let pThis = pUnk.bindMemory(to: WinSDK.IMoniker.self, capacity: 1)
 
-    var ppmkToLeft: UnsafeMutablePointer<WinSDK.IMoniker>? = pmkToLeft.raw
+    var ppmkToLeft: UnsafeMutablePointer<WinSDK.IMoniker>? =
+        RawPointer(pmkToLeft)
     var pmkReduced: UnsafeMutablePointer<WinSDK.IMoniker>?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Reduce(pThis, pbc.raw, dwReduceHowFar,
-                                            &ppmkToLeft, &pmkReduced)
+        pThis.pointee.lpVtbl.pointee.Reduce(pThis, RawPointer(pbc),
+                                            dwReduceHowFar, &ppmkToLeft,
+                                            &pmkReduced)
     guard hr == S_OK else { throw COMError(hr: hr) }
     pmkToLeft = IMoniker(pUnk: ppmkToLeft)
     return IMoniker(pUnk: pmkReduced)
@@ -236,7 +243,7 @@ public class IMoniker: IPersistStream {
 
     var pmkRelPath: UnsafeMutablePointer<WinSDK.IMoniker>?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.RelativePathTo(pThis, pmkOther.raw,
+        pThis.pointee.lpVtbl.pointee.RelativePathTo(pThis, RawPointer(pmkOther),
                                                     &pmkRelPath)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IMoniker(pUnk: pmkRelPath)

@@ -11,7 +11,7 @@ public func SHCreateItemFromParsingName(_ pszPath: String, _ pbc: IBindCtx?,
                                         _ riid: inout IID) throws -> IUnknown {
   var pv: UnsafeMutableRawPointer?
   let hr: HRESULT =
-      SHCreateItemFromParsingName(pszPath.wide, pbc?.raw, &riid, &pv)
+      SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv)
   guard hr == S_OK else { throw COMError(hr: hr) }
   return IUnknown(pUnk: pv)
 }
@@ -22,7 +22,7 @@ public func SHCreateItemFromParsingName<T: IUnknown>(_ pszPath: String,
   var riid: IID = T.IID
   var pv: UnsafeMutableRawPointer?
   let hr: HRESULT =
-      SHCreateItemFromParsingName(pszPath.wide, pbc?.raw, &riid, &pv)
+      SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv)
   guard hr == S_OK else { throw COMError(hr: hr) }
   return T(pUnk: pv)
 }

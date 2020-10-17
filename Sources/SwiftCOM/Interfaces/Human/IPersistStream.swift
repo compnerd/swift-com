@@ -42,7 +42,7 @@ public class IPersistStream: IUnknown {
     }
     let pThis = pUnk.bindMemory(to: WinSDK.IPersistStream.self, capacity: 1)
 
-    let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Load(pThis, pStm.raw)
+    let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Load(pThis, RawPointer(pStm))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -53,7 +53,7 @@ public class IPersistStream: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IPersistStream.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Save(pThis, pStm.raw,
+        pThis.pointee.lpVtbl.pointee.Save(pThis, RawPointer(pStm),
                                           WindowsBool(fClearDirty == true))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }

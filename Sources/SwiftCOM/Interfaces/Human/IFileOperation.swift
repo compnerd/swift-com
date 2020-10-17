@@ -18,7 +18,7 @@ public class IFileOperation: IUnknown {
 
     var dwCookie: DWORD = 0
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Advise(pThis, pfops.raw, &dwCookie)
+        pThis.pointee.lpVtbl.pointee.Advise(pThis, RawPointer(pfops), &dwCookie)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return dwCookie
   }
@@ -30,7 +30,8 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.ApplyPropertiesToItem(pThis, psiItem.raw)
+        pThis.pointee.lpVtbl.pointee.ApplyPropertiesToItem(pThis,
+                                                           RawPointer(psiItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -56,9 +57,10 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.CopyItem(pThis, psiItem.raw,
-                                              psiDestinationFolder.raw,
-                                              pszCopyName?.wide, pfopsItem?.raw)
+        pThis.pointee.lpVtbl.pointee.CopyItem(pThis, RawPointer(psiItem),
+                                              RawPointer(psiDestinationFolder),
+                                              pszCopyName?.wide,
+                                              RawPointer(pfopsItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -71,7 +73,7 @@ public class IFileOperation: IUnknown {
 
     let hr: HRESULT =
         pThis.pointee.lpVtbl.pointee.CopyItems(pThis, punkItems.pUnk,
-                                               psiDestinationFolder.raw)
+                                               RawPointer(psiDestinationFolder))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -83,8 +85,8 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.DeleteItem(pThis, psiItem.raw,
-                                                pfopsItem?.raw)
+        pThis.pointee.lpVtbl.pointee.DeleteItem(pThis, RawPointer(psiItem),
+                                                RawPointer(pfopsItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -122,9 +124,10 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.MoveItem(pThis, psiItem.raw,
-                                              psiDestinationFolder.raw,
-                                              pszNewName?.wide, pfopsItem?.raw)
+        pThis.pointee.lpVtbl.pointee.MoveItem(pThis, RawPointer(psiItem),
+                                              RawPointer(psiDestinationFolder),
+                                              pszNewName?.wide,
+                                              RawPointer(pfopsItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -137,7 +140,7 @@ public class IFileOperation: IUnknown {
 
     let hr: HRESULT =
         pThis.pointee.lpVtbl.pointee.MoveItems(pThis, punkItems.pUnk,
-                                               psiDestinationFolder.raw)
+                                               RawPointer(psiDestinationFolder))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -151,10 +154,11 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.NewItem(pThis, psiDestinationFolder.raw,
+        pThis.pointee.lpVtbl.pointee.NewItem(pThis,
+                                             RawPointer(psiDestinationFolder),
                                              dwFileAttributes, pszName.wide,
                                              pszTemplateName?.wide,
-                                             pfopsItem?.raw)
+                                             RawPointer(pfopsItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -176,8 +180,9 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.RenameItem(pThis, psiItem.raw,
-                                                pszNewName.wide, pfopsItem?.raw)
+        pThis.pointee.lpVtbl.pointee.RenameItem(pThis, RawPointer(psiItem),
+                                                pszNewName.wide,
+                                                RawPointer(pfopsItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -223,7 +228,7 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.SetProgressDialog(pThis, popd.raw)
+        pThis.pointee.lpVtbl.pointee.SetProgressDialog(pThis, RawPointer(popd))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -245,7 +250,7 @@ public class IFileOperation: IUnknown {
     let pThis = pUnk.bindMemory(to: WinSDK.IFileOperation.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.SetProperties(pThis, ppropArray.raw)
+        pThis.pointee.lpVtbl.pointee.SetProperties(pThis, RawPointer(ppropArray))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 

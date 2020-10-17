@@ -19,8 +19,8 @@ public class IShellItem: IUnknown {
 
     var pv: UnsafeMutableRawPointer?
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.BindToHandler(pThis, pbc.raw, &bhid, &riid,
-                                                   &pv)
+        pThis.pointee.lpVtbl.pointee.BindToHandler(pThis, RawPointer(pbc),
+                                                   &bhid, &riid, &pv)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return IUnknown(pUnk: pv)
   }
@@ -33,7 +33,8 @@ public class IShellItem: IUnknown {
 
     var iOrder: CInt = 0
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Compare(pThis, psi.raw, hint, &iOrder)
+        pThis.pointee.lpVtbl.pointee.Compare(pThis, RawPointer(psi), hint,
+                                             &iOrder)
     guard hr == S_OK else { throw COMError(hr: hr) }
     return iOrder
   }

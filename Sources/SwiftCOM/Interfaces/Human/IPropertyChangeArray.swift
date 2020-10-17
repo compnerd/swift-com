@@ -18,7 +18,7 @@ public class IPropertyChangeArray: IUnknown {
         pUnk.bindMemory(to: WinSDK.IPropertyChangeArray.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Append(pThis, ppropChange.raw)
+        pThis.pointee.lpVtbl.pointee.Append(pThis, RawPointer(ppropChange))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -30,7 +30,8 @@ public class IPropertyChangeArray: IUnknown {
         pUnk.bindMemory(to: WinSDK.IPropertyChangeArray.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.AppendOrReplace(pThis, ppropChange.raw)
+        pThis.pointee.lpVtbl.pointee.AppendOrReplace(pThis,
+                                                     RawPointer(ppropChange))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
@@ -70,7 +71,8 @@ public class IPropertyChangeArray: IUnknown {
         pUnk.bindMemory(to: WinSDK.IPropertyChangeArray.self, capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.InsertAt(pThis, iIndex, ppropChange.raw)
+        pThis.pointee.lpVtbl.pointee.InsertAt(pThis, iIndex,
+                                              RawPointer(ppropChange))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 

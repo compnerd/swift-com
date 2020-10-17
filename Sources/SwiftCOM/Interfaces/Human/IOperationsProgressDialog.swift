@@ -127,8 +127,10 @@ public class IOperationsProgressDialog: IUnknown {
                                 capacity: 1)
 
     let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.UpdateLocations(pThis, psiSource.raw,
-                                                     psiTarget.raw, psiItem.raw)
+        pThis.pointee.lpVtbl.pointee.UpdateLocations(pThis,
+                                                     RawPointer(psiSource),
+                                                     RawPointer(psiTarget),
+                                                     RawPointer(psiItem))
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
