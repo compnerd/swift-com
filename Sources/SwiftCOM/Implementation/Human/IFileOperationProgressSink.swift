@@ -10,8 +10,8 @@ import WinSDK
 extension IFileOperationProgressSink {
   fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?)
       -> IFileOperationProgressSink? {
-    return pUnk?.assumingMemoryBound(to: IFileOperationProgressSink.Storage.self)
-              .pointee.pointer
+    return pUnk?.assumingMemoryBound(to: IFileOperationProgressSink.Object.self)
+              .pointee.wrapper
   }
 }
 
@@ -24,8 +24,8 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
       ppvObject.pointee = nil
       return E_NOINTERFACE
     }
-    ppvObject.pointee = UnsafeMutableRawPointer(pUnk)
     _ = pUnk.pointee.lpVtbl.pointee.AddRef(pUnk)
+    ppvObject.pointee = UnsafeMutableRawPointer(pUnk)
     return S_OK
   },
   AddRef: {
@@ -41,7 +41,7 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
     withUnsafeMutablePointer(to: &instance) {
       Unmanaged<IFileOperationProgressSink>.fromOpaque($0).release()
     }
-    // TODO(compnerd) return old reference count
+    // TODO(compnerd) return new reference count
     return 0
   },
   StartOperations: {
@@ -159,18 +159,18 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
 open class IFileOperationProgressSink: IUnknown {
   override public class var IID: IID { IID_IFileOperationProgressSink }
 
-  fileprivate struct Storage {
+  fileprivate struct Object {
     var `class`: WinSDK.IFileOperationProgressSink
-    unowned var pointer: IFileOperationProgressSink?
+    unowned var wrapper: IFileOperationProgressSink?
   }
-  fileprivate var instance: Storage
+  fileprivate var instance: Object
 
   required public init(pUnk pointer: UnsafeMutableRawPointer? = nil) {
     self.instance = withUnsafeMutablePointer(to: &vtable) {
-      Storage(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
+      Object(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
     }
     super.init(pUnk: withUnsafeMutablePointer(to: &instance) { $0 })
-    self.instance.pointer = self
+    self.instance.wrapper = self
   }
 
   open func FinishOperations(_ hrResult: HRESULT) -> HRESULT {
