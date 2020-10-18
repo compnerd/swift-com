@@ -9,7 +9,7 @@ import WinSDK
 
 extension IFileOperationProgressSink {
   fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?)
-      -> IFileOperationProgressSink? {
+      -> Unmanaged<IFileOperationProgressSink>? {
     return pUnk?.assumingMemoryBound(to: IFileOperationProgressSink.Object.self)
               .pointee.wrapper
   }
@@ -30,41 +30,38 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
   },
   AddRef: {
     var instance = IFileOperationProgressSink.from($0)!
-    _ = withUnsafeMutablePointer(to: &instance) {
-      Unmanaged<IFileOperationProgressSink>.fromOpaque($0).retain()
-    }
-    // TODO(compnerd) return new reference count
-    return 0
+    _ = instance.retain()
+    return ULONG(_getRetainCount(instance.takeUnretainedValue()))
   },
   Release: {
     var instance = IFileOperationProgressSink.from($0)!
-    withUnsafeMutablePointer(to: &instance) {
-      Unmanaged<IFileOperationProgressSink>.fromOpaque($0).release()
-    }
-    // TODO(compnerd) return new reference count
-    return 0
+    return ULONG(_getRetainCount(instance.takeRetainedValue()))
   },
   StartOperations: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.StartOperations()
   },
   FinishOperations: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.FinishOperations($1)
   },
   PreRenameItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PreRenameItem($1, IShellItem(pUnk: $2),
                               String(decodingCString: $3!, as: UTF16.self))
   },
   PostRenameItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PostRenameItem($1, IShellItem(pUnk: $2),
@@ -72,14 +69,16 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
                                $4, IShellItem(pUnk: $5))
   },
   PreMoveItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PreMoveItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
                             String(decodingCString: $4!, as: UTF16.self))
   },
   PostMoveItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PostMoveItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
@@ -87,14 +86,16 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
                              $5, IShellItem(pUnk: $6))
   },
   PreCopyItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PreCopyItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
                             String(decodingCString: $4!, as: UTF16.self))
   },
   PostCopyItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PostCopyItem($1, IShellItem(pUnk: $2), IShellItem(pUnk: $3),
@@ -102,27 +103,31 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
                              $5, IShellItem(pUnk: $6))
   },
   PreDeleteItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PreDeleteItem($1, IShellItem(pUnk: $2))
   },
   PostDeleteItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PostDeleteItem($1, IShellItem(pUnk: $2), $3,
                                IShellItem(pUnk: $4))
   },
   PreNewItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PreNewItem($1, IShellItem(pUnk: $2),
                            String(decodingCString: $3!, as: UTF16.self))
   },
   PostNewItem: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PostNewItem($1, IShellItem(pUnk: $2),
@@ -131,25 +136,29 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
                             $5, $6, IShellItem(pUnk: $7))
   },
   UpdateProgress: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.UpdateProgress($1, $2)
   },
   ResetTimer: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.ResetTimer()
   },
   PauseTimer: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.PauseTimer()
   },
   ResumeTimer: {
-    guard let self = IFileOperationProgressSink.from($0) else {
+    guard let self =
+        IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
       return E_INVALIDARG
     }
     return self.ResumeTimer()
@@ -161,7 +170,7 @@ open class IFileOperationProgressSink: IUnknown {
 
   fileprivate struct Object {
     var `class`: WinSDK.IFileOperationProgressSink
-    unowned var wrapper: IFileOperationProgressSink?
+    var wrapper: Unmanaged<IFileOperationProgressSink>?
   }
   fileprivate var instance: Object
 
@@ -170,7 +179,8 @@ open class IFileOperationProgressSink: IUnknown {
       Object(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
     }
     super.init(pUnk: withUnsafeMutablePointer(to: &instance) { $0 })
-    self.instance.wrapper = self
+    self.instance.wrapper =
+        Unmanaged<IFileOperationProgressSink>.passUnretained(self)
   }
 
   open func FinishOperations(_ hrResult: HRESULT) -> HRESULT {
