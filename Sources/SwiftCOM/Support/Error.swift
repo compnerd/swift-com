@@ -17,13 +17,19 @@ public struct COMError: Error {
 
 extension COMError: CustomStringConvertible {
   public var description: String {
-    let buffer: UnsafeMutablePointer<WCHAR>? = nil
-    let dwResult: DWORD =
-        FormatMessageW(DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
-                       nil, DWORD(bitPattern: hr),
+    let dwFlags: DWORD = DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER)
+                       | DWORD(FORMAT_MESSAGE_FROM_SYSTEM)
+                       | DWORD(FORMAT_MESSAGE_IGNORE_INSERTS)
+
+    var buffer: UnsafeMutablePointer<WCHAR>? = nil
+    let dwResult: DWORD = withUnsafeMutablePointer(to: &buffer) {
+      $0.withMemoryRebound(to: WCHAR.self, capacity: 2) {
+        FormatMessageW(dwFlags, nil, DWORD(bitPattern: hr),
                        MAKELANGID(WORD(LANG_NEUTRAL), WORD(SUBLANG_DEFAULT)),
-                       buffer, 0, nil)
-    guard dwResult == 0, let message = buffer else {
+                       $0, 0, nil)
+      }
+    }
+    guard dwResult > 0, let message = buffer else {
       return "HRESULT(0x\(String(DWORD(bitPattern: hr), radix: 16)))"
     }
     defer { LocalFree(buffer) }
