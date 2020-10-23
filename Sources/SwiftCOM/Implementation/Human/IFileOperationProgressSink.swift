@@ -7,7 +7,26 @@
 
 import WinSDK
 
+
+//                                                +--------+
+//                                            +-->+ vtable |
+//                              +---------+   |   +--------+
+//                          +-->+ lpvfTbl +---+
+//          +-----------+   |   +---------+
+// pThis+-->+ WinSDK.T  +---+
+//          +-----------+
+//          | Unmanaged +---+
+//          +-----------+   |   +---------+
+//                          +-->+ Swift.T +---+
+//                              +---------+   |   +--------------+
+//                                            +-->+ User Defined |
+//                                                +--------------+
+
 extension IFileOperationProgressSink {
+  // Recover the unmanaged `IFileOperationProgressSink` Swift instance which the
+  // COM instance is associated with.
+  //
+  // See Also: `IFileOperationProgressSink.Object`
   fileprivate static func from(_ pUnk: UnsafeMutableRawPointer?)
       -> Unmanaged<IFileOperationProgressSink>? {
     return pUnk?.assumingMemoryBound(to: IFileOperationProgressSink.Object.self)
@@ -15,7 +34,14 @@ extension IFileOperationProgressSink {
   }
 }
 
+// The COM vtable for the `IFileOperationProgressSink` that will be registered
+// with COM when the Swift instance is created. The vtable simply converts the
+// arguments to the wrapped Swift type and dispatches to the instance which is
+// derived from the storage of the Swift object identified through the passed in
+// instance pointer.
 private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
+  // MARK - IUnknown Methods
+
   QueryInterface: {
     guard let pUnk = $0, let riid = $1, let ppvObject = $2 else {
       return E_INVALIDARG
@@ -37,6 +63,9 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
     var instance = IFileOperationProgressSink.from($0)!
     return ULONG(_getRetainCount(instance.takeRetainedValue()))
   },
+
+  // MARK - IFileOperationProgressSink Methods
+
   StartOperations: {
     guard let self =
         IFileOperationProgressSink.from($0)?.takeUnretainedValue() else {
@@ -165,15 +194,33 @@ private var vtable: WinSDK.IFileOperationProgressSinkVtbl = .init(
   }
 )
 
+/// Exposes methods that provide a rich notification system used by callers of
+/// `IFileOperation` to monitor the details of the operations they are performing
+/// through that interface.
 open class IFileOperationProgressSink: IUnknown {
   override public class var IID: IID { IID_IFileOperationProgressSink }
 
+  // Represents the COM object as passed to the COM system.
+  //
+  // The object consists of the WinSDK representation of the type itself and a
+  // pointer to an unmanaged Swift object instance of the Swift class type
+  // mirroring the COM object. The layout of this object is important as the
+  // pointer to an instance of this type is passed to COM so that COM can treat
+  // it as the WinSDK type while enabling Swift to recover the associated class
+  // allocation.
   fileprivate struct Object {
     var `class`: WinSDK.IFileOperationProgressSink
     var wrapper: Unmanaged<IFileOperationProgressSink>?
   }
   fileprivate var instance: Object
 
+  // MARK - Creating an `IFileOperationProgressSink`
+
+  /// Creates an object conforming to the `IFileOperationProgressSink` COM
+  /// interface.
+  ///
+  /// `pUnk` should be `nil` always, the instance being allocated provides the
+  /// interface implementation.
   required public init(pUnk pointer: UnsafeMutableRawPointer? = nil) {
     self.instance = withUnsafeMutablePointer(to: &vtable) {
       Object(class: WinSDK.IFileOperationProgressSink(lpVtbl: $0))
@@ -183,14 +230,19 @@ open class IFileOperationProgressSink: IUnknown {
         Unmanaged<IFileOperationProgressSink>.passUnretained(self)
   }
 
+  /// Performs caller-implemented actions after the last operation perform by the
+  /// call to `IFileOperation` is complete.
   open func FinishOperations(_ hrResult: HRESULT) -> HRESULT {
     return S_OK
   }
 
+  /// Not supported.
   open func PauseTimer() -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions after the copy process for each item is
+  /// complete.
   open func PostCopyItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                          _ psiDestinationFolder: IShellItem,
                          _ pszNewName: String, _ hrCopy: HRESULT,
@@ -198,12 +250,16 @@ open class IFileOperationProgressSink: IUnknown {
     return S_OK
   }
 
+  /// Performs caller-implemented actions after the delete process for each item
+  /// in complete.
   open func PostDeleteItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                            _ hrDelete: HRESULT, _ psiNewlyCreated: IShellItem)
       -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions after the move process for each item is
+  /// complete.
   open func PostMoveItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                          _ psiDestinationFolder: IShellItem,
                          _ pszNewName: String, _ hrMove: HRESULT,
@@ -211,6 +267,7 @@ open class IFileOperationProgressSink: IUnknown {
     return S_OK
   }
 
+  /// Performs caller-implemented actions after the new item is created.
   open func PostNewItem(_ dwFlags: DWORD, _ psiDestinationFolder: IShellItem,
                         _ pszNewName: String, _ pszTemplateName: String,
                         _ dwFileAttributes: DWORD, _ hrNew: HRESULT,
@@ -218,50 +275,68 @@ open class IFileOperationProgressSink: IUnknown {
     return S_OK
   }
 
+  /// Performs caller-implemented actions after the rename process for each item
+  /// is complete.
   open func PostRenameItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                            _ pszNewName: String, _ hrRename: HRESULT,
                            _ psiNewlyCreated: IShellItem) -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before the copy process for each item
+  /// begins.
   open func PreCopyItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                         _ psiDestinationFolder: IShellItem,
                         _ pszNewName: String) -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before the delete process for each item
+  /// begins.
   open func PreDeleteItem(_ dwFlags: DWORD, _ psiItem: IShellItem) -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before the move process for each item
+  /// begins.
   open func PreMoveItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                         _ psiDestinationFolder: IShellItem,
                         _ pszNewName: String) -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before the process to create a new item
+  /// begins.
   open func PreNewItem(_ dwFlags: DWORD, _ psiDestinationFolder: IShellItem,
                        _ pszNewName: String) -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before the rename process for each item
+  /// begins.
   open func PreRenameItem(_ dwFlags: DWORD, _ psiItem: IShellItem,
                           _ pszNewName: String) -> HRESULT {
     return S_OK
   }
 
+  /// Not supported.
   open func ResetTimer() -> HRESULT {
     return S_OK
   }
 
+  /// Not supported.
   open func ResumeTimer() -> HRESULT {
     return S_OK
   }
 
+  /// Performs caller-implemented actions before any specific file operations are
+  /// performed.
   open func StartOperations() -> HRESULT {
     return S_OK
   }
 
+  /// Provides an estimate of the total amount of work currently done in relation
+  /// to the total amount of work.
   open func UpdateProgress(_ iWorkTotal: UINT, _ iWorkSoFar: UINT) -> HRESULT {
     return S_OK
   }
