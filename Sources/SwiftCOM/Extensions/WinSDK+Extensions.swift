@@ -10,9 +10,12 @@ import WinSDK
 // FIXME(compnerd) unfortunately these must be public as they are part of the
 // public API.  These really should be vended by WinSDK.
 public typealias REFIID = UnsafePointer<IID>
+public typealias REFGUID = UnsafePointer<GUID>
 public typealias REFCLSID = UnsafePointer<CLSID>
 public typealias REFPROPVARIANT = UnsafePointer<PROPVARIANT>
 public typealias REFPROPERTYKEY = UnsafePointer<PROPERTYKEY>
+
+public typealias REFWICPixelFormatGUID = UnsafePointer<WICPixelFormatGUID>
 
 // winerror.h
 internal var E_INVALIDARG: HRESULT {
