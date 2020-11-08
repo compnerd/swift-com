@@ -27,6 +27,10 @@ internal var E_FAIL: HRESULT {
   HRESULT(bitPattern: 0x80004005)
 }
 
+internal var RPC_E_CHANGED_MODE: HRESULT {
+  HRESULT(bitPattern: 0x80010106)
+}
+
 // winnt.h
 @_transparent
 public func MAKELANGID(_ p: WORD, _ s: WORD) -> DWORD {
