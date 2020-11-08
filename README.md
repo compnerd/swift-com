@@ -6,7 +6,7 @@ Swift/COM bridges COM interfaces to Swift by generating Swift interfaces for the
 import SwiftCOM
 import WinSDK
 
-try! CoInitializeEx(nil, COINIT_MULTITHREADED)
+try! CoInitializeEx(COINIT_MULTITHREADED)
 
 if let pFD = try? IFileDialog.CreateInstance(class: CLSID_FileOpenDialog) {
   try pFD.Show(nil)
