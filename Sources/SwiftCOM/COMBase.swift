@@ -13,6 +13,7 @@ public func CoInitializeEx(_ pvReserved: LPVOID?,
 }
 
 public func CoInitializeEx(_ dwCoInit: COINIT = COINIT_MULTITHREADED) throws {
+  // MSDN: pvReserved: This parameter is reserved and must be NULL.
   let hr: HRESULT = CoInitializeEx(nil, dwCoInit)
   switch hr {
   case S_OK, S_FALSE, RPC_E_CHANGED_MODE: break
@@ -20,8 +21,9 @@ public func CoInitializeEx(_ dwCoInit: COINIT = COINIT_MULTITHREADED) throws {
   }
 }
 
-public func CoGetMalloc(_ dwMemContext: DWORD = 1) throws -> IMalloc {
+public func CoGetMalloc() throws -> IMalloc {
   var pMalloc: LPMALLOC?
+  // MSDN: dwMemContext: This parameter must be 1.
   let hr: HRESULT = CoGetMalloc(1, &pMalloc)
   guard hr == S_OK else { throw COMError(hr: hr) }
   return IMalloc(pUnk: pMalloc)
