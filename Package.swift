@@ -8,6 +8,12 @@ let SwiftCOM = Package(
     .library(name: "SwiftCOM", type: .dynamic, targets: ["SwiftCOM"]),
   ],
   targets: [
-    .target(name: "SwiftCOM", linkerSettings: [.linkedLibrary("Ole32")])
+    .target(
+      name: "SwiftCOM",
+      linkerSettings: [
+        .linkedLibrary("Ole32"),
+        .linkedLibrary("PortableDeviceGuids"),
+      ]
+    )
   ]
 )
