@@ -21,28 +21,24 @@ public class IWICBitmapSource: IUnknown {
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
-  public func CopyPixels(_ rc: WICRect?, _ cbStride: UINT) throws -> [BYTE] {
+  public func CopyPixels(_ rc: WICRect?, _ cbStride: UINT,
+                         _ pbBuffer: UnsafeMutableBufferPointer<BYTE>) throws {
     guard let pUnk = UnsafeMutableRawPointer(self.pUnk) else {
       throw COMError(hr: E_INVALIDARG)
     }
     let pThis = pUnk.bindMemory(to: WinSDK.IWICBitmapSource.self, capacity: 1)
 
-    let szBuffer: Int =
-        try Int(cbStride) / (rc == nil ? Int(GetSize().0) : Int(rc!.Width))
-    return try Array<BYTE>(unsafeUninitializedCapacity: szBuffer) {
-      let hr: HRESULT
-      if var rc = rc {
-        hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, &rc, cbStride,
-                                                     UINT(szBuffer),
-                                                     $0.baseAddress)
-      } else {
-        hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, nil, cbStride,
-                                                     UINT(szBuffer),
-                                                     $0.baseAddress)
-      }
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      $1 = Int(szBuffer)
+    let hr: HRESULT
+    if var rc = rc {
+      hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, &rc, cbStride,
+                                                   UINT(pbBuffer.count),
+                                                   pbBuffer.baseAddress)
+    } else {
+      hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, nil, cbStride,
+                                                   UINT(pbBuffer.count),
+                                                   pbBuffer.baseAddress)
     }
+    guard hr == S_OK else { throw COMError(hr: hr) }
   }
 
   public func GetPixelFormat() throws -> WICPixelFormatGUID {
