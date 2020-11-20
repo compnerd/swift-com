@@ -47,3 +47,16 @@ public class IWICFormatConverter: IWICBitmapSource {
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 }
+
+extension IWICFormatConverter {
+  public func Initialize(_ pISource: IWICBitmapSource,
+                         _ dstFormat: WICPixelFormatGUID,
+                         _ dither: WICBitmapDitherType,
+                         _ pIPalette: IWICPalette?,
+                         _ alphaThresholdPercent: Double,
+                         _ paletteTranslate: WICBitmapPaletteType) throws {
+    var dstFormat = dstFormat
+    return try Initialize(pISource, &dstFormat, dither, pIPalette,
+                          alphaThresholdPercent, paletteTranslate)
+  }
+}
