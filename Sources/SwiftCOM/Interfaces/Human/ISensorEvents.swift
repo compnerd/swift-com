@@ -68,7 +68,7 @@ private var vtable: WinSDK.ISensorEventsVtbl = .init(
   }
 )
 
-public class ISensorEvents: IUnknown {
+open class ISensorEvents: IUnknown {
   override public class var IID: IID { IID_ISensorManagerEvents }
 
   fileprivate struct Object {
