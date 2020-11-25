@@ -79,3 +79,11 @@ public class ISensorManager: IUnknown {
     guard hr == S_OK else { throw COMError(hr: hr) }
   }
 }
+
+extension ISensorManager {
+  public func GetSensorsByType(_ sensorType: SENSOR_TYPE_ID)
+      throws -> ISensorCollection {
+    var sensorType = sensorType
+    return try GetSensorsByType(&sensorType)
+  }
+}
