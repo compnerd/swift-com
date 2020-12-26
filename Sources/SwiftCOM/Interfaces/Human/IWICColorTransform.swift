@@ -14,16 +14,13 @@ public class IWICColorTransform: IWICBitmapSource {
                          _ pIContextSource: IWICColorContext,
                          _ pIContextDest: IWICColorContext,
                          _ pixelFmtDest: REFWICPixelFormatGUID) throws {
-    guard let pUnk = UnsafeMutableRawPointer(self.pUnk) else {
-      throw COMError(hr: E_INVALIDARG)
+    return try perform(as: WinSDK.IWICColorTransform.self) { pThis in
+      let hr: HRESULT =
+          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
+                                                  RawPointer(pIContextSource),
+                                                  RawPointer(pIContextDest),
+                                                  pixelFmtDest)
+      guard hr == S_OK else { throw COMError(hr: hr) }
     }
-    let pThis = pUnk.bindMemory(to: WinSDK.IWICColorTransform.self, capacity: 1)
-
-    let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                RawPointer(pIContextSource),
-                                                RawPointer(pIContextDest),
-                                                pixelFmtDest)
-    guard hr == S_OK else { throw COMError(hr: hr) }
   }
 }
