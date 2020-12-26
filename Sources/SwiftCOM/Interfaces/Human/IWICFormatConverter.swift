@@ -13,18 +13,15 @@ public class IWICFormatConverter: IWICBitmapSource {
   public func CanConvert(_ srcPixelFormat: REFWICPixelFormatGUID,
                          _ dstPixelFormat: REFWICPixelFormatGUID)
       throws -> Bool {
-    guard let pUnk = UnsafeMutableRawPointer(self.pUnk) else {
-      throw COMError(hr: E_INVALIDARG)
+    return try perform(as: WinSDK.IWICFormatConverter.self) { pThis in
+      var fCanConvert: WindowsBool = false
+      let hr: HRESULT =
+          pThis.pointee.lpVtbl.pointee.CanConvert(pThis, srcPixelFormat,
+                                                  dstPixelFormat,
+                                                  &fCanConvert)
+      guard hr == S_OK else { throw COMError(hr: hr) }
+      return fCanConvert == true
     }
-    let pThis = pUnk.bindMemory(to: WinSDK.IWICFormatConverter.self, capacity: 1)
-
-    var fCanConvert: WindowsBool = false
-    let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.CanConvert(pThis, srcPixelFormat,
-                                                dstPixelFormat,
-                                                &fCanConvert)
-    guard hr == S_OK else { throw COMError(hr: hr) }
-    return fCanConvert == true
   }
 
   public func Initialize(_ pISource: IWICBitmapSource,
@@ -33,18 +30,15 @@ public class IWICFormatConverter: IWICBitmapSource {
                          _ pIPalette: IWICPalette?,
                          _ alphaThresholdPercent: Double,
                          _ paletteTranslate: WICBitmapPaletteType) throws {
-    guard let pUnk = UnsafeMutableRawPointer(self.pUnk) else {
-      throw COMError(hr: E_INVALIDARG)
+    return try perform(as: WinSDK.IWICFormatConverter.self) { pThis in
+      let hr: HRESULT =
+          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
+                                                  dstFormat, dither,
+                                                  RawPointer(pIPalette),
+                                                  alphaThresholdPercent,
+                                                  paletteTranslate)
+      guard hr == S_OK else { throw COMError(hr: hr) }
     }
-    let pThis = pUnk.bindMemory(to: WinSDK.IWICFormatConverter.self, capacity: 1)
-
-    let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                dstFormat, dither,
-                                                RawPointer(pIPalette),
-                                                alphaThresholdPercent,
-                                                paletteTranslate)
-    guard hr == S_OK else { throw COMError(hr: hr) }
   }
 }
 

@@ -12,17 +12,13 @@ public class IPropertyChange: IObjectWithPropertyKey {
 
   public func ApplyToPropVariant(_ propvarIn: REFPROPVARIANT)
       throws -> PROPVARIANT {
-    guard let pUnk = UnsafeMutableRawPointer(self.pUnk) else {
-      throw COMError(hr: E_INVALIDARG)
+    return try perform(as: WinSDK.IPropertyChange.self) { pThis in
+      var propvarOut: PROPVARIANT = PROPVARIANT()
+      let hr: HRESULT =
+          pThis.pointee.lpVtbl.pointee.ApplyToPropVariant(pThis, propvarIn,
+                                                          &propvarOut)
+      guard hr == S_OK else { throw COMError(hr: hr) }
+      return propvarOut
     }
-    let pThis =
-        pUnk.bindMemory(to: WinSDK.IPropertyChange.self, capacity: 1)
-
-    var propvarOut: PROPVARIANT = PROPVARIANT()
-    let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.ApplyToPropVariant(pThis, propvarIn,
-                                                        &propvarOut)
-    guard hr == S_OK else { throw COMError(hr: hr) }
-    return propvarOut
   }
 }
