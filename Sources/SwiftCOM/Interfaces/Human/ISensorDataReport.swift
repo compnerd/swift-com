@@ -13,9 +13,7 @@ public class ISensorDataReport: IUnknown {
   public func GetSensorValue(_ pKey: REFPROPERTYKEY) throws -> PROPVARIANT {
     return try perform(as: WinSDK.ISensorDataReport.self) { pThis in
       var Value: PROPVARIANT = PROPVARIANT()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSensorValue(pThis, pKey, &Value)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSensorValue(pThis, pKey, &Value))
       return Value
     }
   }
@@ -24,10 +22,7 @@ public class ISensorDataReport: IUnknown {
       throws -> IPortableDeviceValues {
     return try perform(as: WinSDK.ISensorDataReport.self) { pThis in
       var pValues: UnsafeMutablePointer<WinSDK.IPortableDeviceValues>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSensorValues(pThis, RawPointer(pKeys),
-                                                       &pValues)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSensorValues(pThis, RawPointer(pKeys), &pValues))
       return IPortableDeviceValues(pUnk: pValues)
     }
   }
@@ -35,9 +30,7 @@ public class ISensorDataReport: IUnknown {
   public func GetTimestamp() throws -> SYSTEMTIME {
     return try perform(as: WinSDK.ISensorDataReport.self) { pThis in
       var TimeStamp: SYSTEMTIME = SYSTEMTIME()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetTimestamp(pThis, &TimeStamp)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTimestamp(pThis, &TimeStamp))
       return TimeStamp
     }
   }

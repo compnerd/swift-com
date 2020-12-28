@@ -14,10 +14,7 @@ public class IWICBitmapScaler: IWICBitmapSource {
                          _ uiHeight: UINT,
                          _ mode: WICBitmapInterpolationMode) throws {
     return try perform(as: WinSDK.IWICBitmapScaler.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                  uiWidth, uiHeight, mode)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource), uiWidth, uiHeight, mode))
     }
   }
 }

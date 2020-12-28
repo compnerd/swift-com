@@ -13,10 +13,7 @@ public class IWICBitmapFlipRotator: IWICBitmapSource {
   public func Initialize(_ pISource: IWICBitmapSource,
                          _ options: WICBitmapTransformOptions) throws {
     return try perform(as: WinSDK.IWICBitmapFlipRotator.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                  options)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource), options))
     }
   }
 }

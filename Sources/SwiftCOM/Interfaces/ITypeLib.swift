@@ -21,9 +21,7 @@ open class ITypeLib: IUnknown {
   public func GetTypeInfo(_ index: UINT) throws -> ITypeInfo {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var info: UnsafeMutablePointer<WinSDK.ITypeInfo>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetTypeInfo(pThis, index, &info)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeInfo(pThis, index, &info))
       return ITypeInfo(pUnk: info)
     }
   }
@@ -32,9 +30,7 @@ open class ITypeLib: IUnknown {
   public func GetTypeInfoType(_ index: UINT) throws -> TYPEKIND {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var kind: TYPEKIND = TKIND_MAX
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetTypeInfoType(pThis, index, &kind)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeInfoType(pThis, index, &kind))
       return kind
     }
   }
@@ -44,9 +40,7 @@ open class ITypeLib: IUnknown {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var guid: GUID = guid
       var pTinfo: UnsafeMutablePointer<WinSDK.ITypeInfo>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetTypeInfoOfGuid(pThis, &guid, &pTinfo)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeInfoOfGuid(pThis, &guid, &pTinfo))
       return ITypeInfo(pUnk: pTinfo)
     }
   }
@@ -55,9 +49,7 @@ open class ITypeLib: IUnknown {
   public func GetLibAttr() throws -> UnsafeMutablePointer<TLIBATTR> {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var pTLibAttr: UnsafeMutablePointer<TLIBATTR>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetLibAttr(pThis, &pTLibAttr)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetLibAttr(pThis, &pTLibAttr))
       return pTLibAttr!
     }
   }
@@ -67,9 +59,7 @@ open class ITypeLib: IUnknown {
   public func GetTypeComp() throws -> ITypeComp {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var pTComp: UnsafeMutablePointer<WinSDK.ITypeComp>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetTypeComp(pThis, &pTComp)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeComp(pThis, &pTComp))
       return ITypeComp(pUnk: pTComp)
     }
   }
@@ -85,11 +75,7 @@ open class ITypeLib: IUnknown {
       var bstrDocString: BSTR!
       var dwHelpContext: DWORD = DWORD.max
       var bstrHelpFile: BSTR!
-
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-          .GetDocumentation(pThis, index, &bstrName, &bstrDocString,
-                            &dwHelpContext, &bstrHelpFile)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDocumentation(pThis, index, &bstrName, &bstrDocString, &dwHelpContext, &bstrHelpFile))
       defer {
         SysFreeString(bstrName)
         SysFreeString(bstrDocString)
@@ -107,9 +93,7 @@ open class ITypeLib: IUnknown {
     return try perform(as: WinSDK.ITypeLib.self) { pThis in
       var szNameBuf: [OLECHAR] = Array<OLECHAR>(from: name)
       var fName: WindowsBool = false
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.IsName(pThis, &szNameBuf, hash, &fName)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.IsName(pThis, &szNameBuf, hash, &fName))
       return fName == true
     }
   }
@@ -123,19 +107,14 @@ open class ITypeLib: IUnknown {
       var pTInfo: [UnsafeMutablePointer<WinSDK.ITypeInfo>?] = []
       var rgMemId: [MEMBERID] = []
       var cFound: USHORT = 0
-      var hr: HRESULT = S_OK
 
-      hr = pThis.pointee.lpVtbl.pointee.FindName(pThis, &szNameBuf, lHashVal,
-                                                &pTInfo, &rgMemId, &cFound)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.FindName(pThis, &szNameBuf, lHashVal, &pTInfo, &rgMemId, &cFound))
 
       pTInfo = Array<UnsafeMutablePointer<WinSDK.ITypeInfo>?>(repeating: nil,
                                                               count: Int(cFound))
       rgMemId = Array<MEMBERID>(repeating: MEMBERID_NIL, count: Int(cFound))
 
-      hr = pThis.pointee.lpVtbl.pointee.FindName(pThis, &szNameBuf, lHashVal,
-                                                &pTInfo, &rgMemId, &cFound)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.FindName(pThis, &szNameBuf, lHashVal, &pTInfo, &rgMemId, &cFound))
 
       return (0 ..< cFound).map {
         (ITypeInfo(pUnk: pTInfo[Int($0)]), rgMemId[Int($0)])

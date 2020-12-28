@@ -12,35 +12,25 @@ public class IWICBitmapSource: IUnknown {
 
   public func CopyPalette(_ pIPalette: IWICPalette) throws {
     return try perform(as: WinSDK.IWICBitmapSource.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CopyPalette(pThis, RawPointer(pIPalette))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CopyPalette(pThis, RawPointer(pIPalette)))
     }
   }
 
   public func CopyPixels(_ rc: WICRect?, _ cbStride: UINT,
                          _ pbBuffer: UnsafeMutableBufferPointer<BYTE>) throws {
     return try perform(as: WinSDK.IWICBitmapSource.self) { pThis in
-      let hr: HRESULT
       if var rc = rc {
-        hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, &rc, cbStride,
-                                                     UINT(pbBuffer.count),
-                                                     pbBuffer.baseAddress)
+        try CHECKED(pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, &rc, cbStride, UINT(pbBuffer.count), pbBuffer.baseAddress))
       } else {
-        hr = pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, nil, cbStride,
-                                                     UINT(pbBuffer.count),
-                                                     pbBuffer.baseAddress)
+        try CHECKED(pThis.pointee.lpVtbl.pointee.CopyPixels(pThis, nil, cbStride, UINT(pbBuffer.count), pbBuffer.baseAddress))
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 
   public func GetPixelFormat() throws -> WICPixelFormatGUID {
     return try perform(as: WinSDK.IWICBitmapSource.self) { pThis in
       var PixelFormat: WICPixelFormatGUID = WICPixelFormatGUID()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetPixelFormat(pThis, &PixelFormat)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetPixelFormat(pThis, &PixelFormat))
       return PixelFormat
     }
   }
@@ -49,9 +39,7 @@ public class IWICBitmapSource: IUnknown {
     return try perform(as: WinSDK.IWICBitmapSource.self) { pThis in
       var DpiX: Double = 0.0
       var DpiY: Double = 0.0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetResolution(pThis, &DpiX, &DpiY)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetResolution(pThis, &DpiX, &DpiY))
       return (DpiX, DpiY)
     }
   }
@@ -60,9 +48,7 @@ public class IWICBitmapSource: IUnknown {
     return try perform(as: WinSDK.IWICBitmapSource.self) { pThis in
       var uiWidth: UINT = UINT(0)
       var uiHeight: UINT = UINT(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSize(pThis, &uiWidth, &uiHeight)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSize(pThis, &uiWidth, &uiHeight))
       return (uiWidth, uiHeight)
     }
   }

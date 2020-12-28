@@ -14,10 +14,7 @@ public class IPropertyChange: IObjectWithPropertyKey {
       throws -> PROPVARIANT {
     return try perform(as: WinSDK.IPropertyChange.self) { pThis in
       var propvarOut: PROPVARIANT = PROPVARIANT()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.ApplyToPropVariant(pThis, propvarIn,
-                                                          &propvarOut)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.ApplyToPropVariant(pThis, propvarIn, &propvarOut))
       return propvarOut
     }
   }

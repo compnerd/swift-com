@@ -13,8 +13,7 @@ public class IPersist: IPersistStream {
   public func GetClassID() throws -> CLSID {
     return try perform(as: WinSDK.IPersist.self) { pThis in
       var ClassID: CLSID = CLSID()
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetClassID(pThis, &ClassID)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetClassID(pThis, &ClassID))
       return ClassID
     }
   }

@@ -15,12 +15,7 @@ public class IWICColorTransform: IWICBitmapSource {
                          _ pIContextDest: IWICColorContext,
                          _ pixelFmtDest: REFWICPixelFormatGUID) throws {
     return try perform(as: WinSDK.IWICColorTransform.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                  RawPointer(pIContextSource),
-                                                  RawPointer(pIContextDest),
-                                                  pixelFmtDest)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource), RawPointer(pIContextSource), RawPointer(pIContextDest), pixelFmtDest))
     }
   }
 }

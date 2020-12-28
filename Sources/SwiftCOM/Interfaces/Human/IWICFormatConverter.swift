@@ -15,11 +15,7 @@ public class IWICFormatConverter: IWICBitmapSource {
       throws -> Bool {
     return try perform(as: WinSDK.IWICFormatConverter.self) { pThis in
       var fCanConvert: WindowsBool = false
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CanConvert(pThis, srcPixelFormat,
-                                                  dstPixelFormat,
-                                                  &fCanConvert)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CanConvert(pThis, srcPixelFormat, dstPixelFormat, &fCanConvert))
       return fCanConvert == true
     }
   }
@@ -31,13 +27,7 @@ public class IWICFormatConverter: IWICBitmapSource {
                          _ alphaThresholdPercent: Double,
                          _ paletteTranslate: WICBitmapPaletteType) throws {
     return try perform(as: WinSDK.IWICFormatConverter.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                  dstFormat, dither,
-                                                  RawPointer(pIPalette),
-                                                  alphaThresholdPercent,
-                                                  paletteTranslate)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource), dstFormat, dither, RawPointer(pIPalette), alphaThresholdPercent, paletteTranslate))
     }
   }
 }

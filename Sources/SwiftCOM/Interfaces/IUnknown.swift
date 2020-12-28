@@ -32,9 +32,7 @@ open class IUnknown {
     var iid: IID = iid
 
     var pointer: UnsafeMutableRawPointer?
-    let hr: HRESULT =
-        pUnk.pointee.lpVtbl.pointee.QueryInterface(pUnk, &iid, &pointer)
-    guard hr == S_OK else { throw COMError(hr: hr) }
+    try CHECKED(pUnk.pointee.lpVtbl.pointee.QueryInterface(pUnk, &iid, &pointer))
     return IUnknown(pUnk: pointer)
   }
 
@@ -62,10 +60,7 @@ extension IUnknown {
     var iid: IID = T.IID
 
     var pointer: UnsafeMutableRawPointer?
-    let hr: HRESULT =
-        CoCreateInstance(&clsid, pUnkOuter?.pUnk, DWORD(dwClsContext.rawValue),
-                         &iid, &pointer)
-    guard hr == S_OK else { throw COMError(hr: hr) }
+    try CHECKED(CoCreateInstance(&clsid, pUnkOuter?.pUnk, DWORD(dwClsContext.rawValue), &iid, &pointer))
     return T(pUnk: pointer)
   }
 }

@@ -24,7 +24,6 @@ public func CoInitializeEx(_ dwCoInit: COINIT = COINIT_MULTITHREADED) throws {
 public func CoGetMalloc() throws -> IMalloc {
   var pMalloc: LPMALLOC?
   // MSDN: dwMemContext: This parameter must be 1.
-  let hr: HRESULT = CoGetMalloc(1, &pMalloc)
-  guard hr == S_OK else { throw COMError(hr: hr) }
+  try CHECKED(CoGetMalloc(1, &pMalloc))
   return IMalloc(pUnk: pMalloc)
 }

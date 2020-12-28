@@ -13,12 +13,11 @@ open class ITypeInfo: IUnknown {
   // TODO(compnerd) create a managed copy of TYPEATTR
   /// Retrieves a `TYPEATTR` structure that contains the attributes of the type
   /// description.
-  public func GetTypeAttr() throws -> UnsafeMutablePointer<TYPEATTR> {
+  public func GetTypeAttr() throws -> UnsafeMutablePointer<TYPEATTR>? {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pTypeAttr: UnsafeMutablePointer<TYPEATTR>?
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetTypeAttr(pThis, &pTypeAttr)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      return pTypeAttr!
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeAttr(pThis, &pTypeAttr))
+      return pTypeAttr
     }
   }
 
@@ -27,8 +26,7 @@ open class ITypeInfo: IUnknown {
   public func GetTypeComp() throws -> ITypeComp {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pTComp: UnsafeMutablePointer<WinSDK.ITypeComp>?
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetTypeComp(pThis, &pTComp)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTypeComp(pThis, &pTComp))
       return ITypeComp(pUnk: pTComp)
     }
   }
@@ -36,25 +34,21 @@ open class ITypeInfo: IUnknown {
   // TODO(compnerd) create a managed copy of FUNCDESC
   /// Retrieves the `FUNCDESC` structure that contains information about a
   /// specified function.
-  public func GetFuncDesc(_ index: UINT) throws -> UnsafeMutablePointer<FUNCDESC> {
+  public func GetFuncDesc(_ index: UINT) throws -> UnsafeMutablePointer<FUNCDESC>?{
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pFuncDesc: UnsafeMutablePointer<FUNCDESC>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetFuncDesc(pThis, index, &pFuncDesc)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      return pFuncDesc!
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetFuncDesc(pThis, index, &pFuncDesc))
+      return pFuncDesc
     }
   }
 
   // TODO(compnerd) create a managed copy of VARDESC
   /// Retrieves a `VARDESC` structure that describes the specified variable.
-  public func GetVarDesc(_ index: UINT) throws -> UnsafeMutablePointer<VARDESC> {
+  public func GetVarDesc(_ index: UINT) throws -> UnsafeMutablePointer<VARDESC>? {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pVarDesc: UnsafeMutablePointer<VARDESC>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetVarDesc(pThis, index, &pVarDesc)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      return pVarDesc!
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetVarDesc(pThis, index, &pVarDesc))
+      return pVarDesc
     }
   }
 
@@ -69,10 +63,7 @@ open class ITypeInfo: IUnknown {
       defer { rgBstrNames.deallocate() }
 
       var cNames: UINT = 0
-      let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.GetNames(pThis, member, rgBstrNames,
-                                              cMaxNames + 1, &cNames)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetNames(pThis, member, rgBstrNames, cMaxNames + 1, &cNames))
 
       var names: [String] = Array<String>()
       names.reserveCapacity(Int(cNames))
@@ -90,9 +81,7 @@ open class ITypeInfo: IUnknown {
   public func GetRefTypeOfImplType(_ index: UINT) throws -> HREFTYPE {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pRefType: HREFTYPE = HREFTYPE()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetRefTypeOfImplType(pThis, index, &pRefType)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetRefTypeOfImplType(pThis, index, &pRefType))
       return pRefType
     }
   }
@@ -102,10 +91,7 @@ open class ITypeInfo: IUnknown {
   public func GetImplTypeFlags(_ index: UINT) throws -> INT {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var ImplTypeFlags: INT = INT()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetImplTypeFlags(pThis, index,
-                                                        &ImplTypeFlags)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetImplTypeFlags(pThis, index, &ImplTypeFlags))
       return ImplTypeFlags
     }
   }
@@ -121,10 +107,7 @@ open class ITypeInfo: IUnknown {
 
       var MemId: [MEMBERID] =
           Array<MEMBERID>(repeating: MEMBERID_NIL, count: names.count)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetIDsOfNames(pThis, &rgszNames,
-                                                    UINT(names.count), &MemId)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetIDsOfNames(pThis, &rgszNames, UINT(names.count), &MemId))
       return MemId
     }
   }
@@ -136,11 +119,7 @@ open class ITypeInfo: IUnknown {
       var VarResult: VARIANT = VARIANT()
       var ExcepInfo: EXCEPINFO = EXCEPINFO()
       var uArgError: UINT = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Invoke(pThis, pInstance, member, wFlags,
-                                              &pDispParams, &VarResult,
-                                              &ExcepInfo, &uArgError)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Invoke(pThis, pInstance, member, wFlags, &pDispParams, &VarResult, &ExcepInfo, &uArgError))
       return (result: VarResult, exception: ExcepInfo, error: uArgError)
     }
   }
@@ -156,10 +135,7 @@ open class ITypeInfo: IUnknown {
       var dwHelpContext: DWORD = DWORD.max
       var bstrHelpFile: BSTR?
 
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-          .GetDocumentation(pThis, member, &bstrName, &bstrDocString,
-                            &dwHelpContext, &bstrHelpFile)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDocumentation(pThis, member, &bstrName, &bstrDocString, &dwHelpContext, &bstrHelpFile))
       defer {
         SysFreeString(bstrName)
         SysFreeString(bstrDocString)
@@ -181,11 +157,7 @@ open class ITypeInfo: IUnknown {
       var BstrName: BSTR?
       var wOrdianal: WORD = 0
 
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetDllEntry(pThis, member, invocation,
-                                                  &BstrDllName, &BstrName,
-                                                  &wOrdianal)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDllEntry(pThis, member, invocation, &BstrDllName, &BstrName, &wOrdianal))
       defer {
         SysFreeString(BstrDllName)
         SysFreeString(BstrName)
@@ -200,9 +172,7 @@ open class ITypeInfo: IUnknown {
   public func GetRefTypeInfo(_ hRefType: HREFTYPE) throws -> ITypeInfo {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pTInfo: UnsafeMutablePointer<WinSDK.ITypeInfo>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetRefTypeInfo(pThis, hRefType, &pTInfo)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetRefTypeInfo(pThis, hRefType, &pTInfo))
       return ITypeInfo(pUnk: pTInfo)
     }
   }
@@ -210,28 +180,22 @@ open class ITypeInfo: IUnknown {
   /// Retrieves the addresses of static functions or variables, such as those
   /// defined in a DLL.
   public func AddressOfMember(_ member: MEMBERID, _ invocation: INVOKEKIND)
-      throws -> UnsafeMutableRawPointer {
+      throws -> UnsafeMutableRawPointer? {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pMember: UnsafeMutableRawPointer?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.AddressOfMember(pThis, member, invocation,
-                                                      &pMember)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      return pMember!
+      try CHECKED(pThis.pointee.lpVtbl.pointee.AddressOfMember(pThis, member, invocation, &pMember))
+      return pMember
     }
   }
 
   /// Creates a new instance of a type that describes a component object class
   /// (coclass).
   public func CreateInstance(_ pUnkOuter: IUnknown, _ riid: REFIID)
-      throws -> UnsafeMutableRawPointer {
+      throws -> UnsafeMutableRawPointer? {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pvObj: PVOID?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, pUnkOuter.pUnk,
-                                                      riid, &pvObj)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-      return pvObj!
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, RawPointer(pUnkOuter), riid, &pvObj))
+      return pvObj
     }
   }
 
@@ -239,9 +203,7 @@ open class ITypeInfo: IUnknown {
   public func GetMops(_ member: MEMBERID) throws -> String {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var BstrMops: BSTR?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetMops(pThis, member, &BstrMops)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetMops(pThis, member, &BstrMops))
       defer { SysFreeString(BstrMops) }
 
       return BstrMops == nil ? "" : String(from: BstrMops!)
@@ -254,9 +216,7 @@ open class ITypeInfo: IUnknown {
     return try perform(as: WinSDK.ITypeInfo.self) { pThis in
       var pTLib: UnsafeMutablePointer<WinSDK.ITypeLib>?
       var Index: UINT = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetContainingTypeLib(pThis, &pTLib, &Index)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetContainingTypeLib(pThis, &pTLib, &Index))
       return (typelib: ITypeLib(pUnk: pTLib), index: Index)
     }
   }

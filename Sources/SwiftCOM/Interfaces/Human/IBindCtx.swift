@@ -13,9 +13,7 @@ public class IBindCtx: IUnknown {
   public func EnumObjectParam() throws -> IEnumString {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var penum: UnsafeMutablePointer<WinSDK.IEnumString>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.EnumObjectParam(pThis, &penum)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.EnumObjectParam(pThis, &penum))
       return IEnumString(pUnk: penum)
     }
   }
@@ -23,9 +21,7 @@ public class IBindCtx: IUnknown {
   public func GetBindOptions() throws -> BIND_OPTS {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var bindopts: BIND_OPTS = BIND_OPTS()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetBindOptions(pThis, &bindopts)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetBindOptions(pThis, &bindopts))
       return bindopts
     }
   }
@@ -34,9 +30,7 @@ public class IBindCtx: IUnknown {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var pUnk: UnsafeMutablePointer<WinSDK.IUnknown>?
       var key: [OLECHAR] = pszKey.wide
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetObjectParam(pThis, &key, &pUnk)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetObjectParam(pThis, &key, &pUnk))
       return IUnknown(pUnk: pUnk)
     }
   }
@@ -44,18 +38,14 @@ public class IBindCtx: IUnknown {
   public func GetRunningObjectTable() throws -> IRunningObjectTable {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var prot: UnsafeMutablePointer<WinSDK.IRunningObjectTable>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetRunningObjectTable(pThis, &prot)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetRunningObjectTable(pThis, &prot))
       return IRunningObjectTable(pUnk: prot)
     }
   }
 
   public func RegisterObjectBound(_ pUnk: IUnknown) throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.RegisterObjectBound(pThis, pUnk.pUnk)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RegisterObjectBound(pThis, RawPointer(pUnk)))
     }
   }
 
@@ -63,42 +53,32 @@ public class IBindCtx: IUnknown {
       throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var key: [OLECHAR] = pszKey.wide
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.RegisterObjectParam(pThis, &key,
-                                                           pUnk.pUnk)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RegisterObjectParam(pThis, &key, RawPointer(pUnk)))
     }
   }
 
   public func ReleaseBoundObjects() throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.ReleaseBoundObjects(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.ReleaseBoundObjects(pThis))
     }
   }
 
-  public func RevokeObjectBound(_ punk: IUnknown) throws {
+  public func RevokeObjectBound(_ pUnk: IUnknown) throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.RevokeObjectBound(pThis, punk.pUnk)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RevokeObjectBound(pThis, RawPointer(pUnk)))
     }
   }
 
   public func RevokeObjectParam(_ pszKey: String) throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
       var key: [OLECHAR] = pszKey.wide
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.RevokeObjectParam(pThis, &key)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RevokeObjectParam(pThis, &key))
     }
   }
 
   public func SetBindOptions(_ pbindopts: inout BIND_OPTS) throws {
     return try perform(as: WinSDK.IBindCtx.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetBindOptions(pThis, &pbindopts)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetBindOptions(pThis, &pbindopts))
     }
   }
 }

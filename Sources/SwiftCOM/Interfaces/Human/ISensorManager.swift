@@ -13,9 +13,7 @@ public class ISensorManager: IUnknown {
   public func GetSensorByID(_ sensorID: REFSENSOR_ID) throws -> ISensor {
     return try perform(as: WinSDK.ISensorManager.self) { pThis in
       var pSensor: UnsafeMutablePointer<WinSDK.ISensor>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSensorByID(pThis, sensorID, &pSensor)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSensorByID(pThis, sensorID, &pSensor))
       return ISensor(pUnk: pSensor)
     }
   }
@@ -24,10 +22,7 @@ public class ISensorManager: IUnknown {
       throws -> ISensorCollection {
     return try perform(as: WinSDK.ISensorManager.self) { pThis in
       var pSensorsFound: UnsafeMutablePointer<WinSDK.ISensorCollection>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSensorsByCategory(pThis, sensorCategory,
-                                                            &pSensorsFound)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSensorsByCategory(pThis, sensorCategory, &pSensorsFound))
       return ISensorCollection(pUnk: pSensorsFound)
     }
   }
@@ -36,10 +31,7 @@ public class ISensorManager: IUnknown {
       throws -> ISensorCollection {
     return try perform(as: WinSDK.ISensorManager.self) { pThis in
       var pSensorsFound: UnsafeMutablePointer<WinSDK.ISensorCollection>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSensorsByType(pThis, sensorType,
-                                                        &pSensorsFound)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSensorsByType(pThis, sensorType, &pSensorsFound))
       return ISensorCollection(pUnk: pSensorsFound)
     }
   }
@@ -48,19 +40,13 @@ public class ISensorManager: IUnknown {
                                  _ pSensors: ISensorCollection?, _ fModal: Bool)
       throws {
     return try perform(as: WinSDK.ISensorManager.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.RequestPermissions(pThis, hParent,
-                                                          RawPointer(pSensors),
-                                                          WindowsBool(fModal))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RequestPermissions(pThis, hParent, RawPointer(pSensors), WindowsBool(fModal)))
     }
   }
 
   public func SetEventSink(_ pEvents: ISensorManagerEvents?) throws {
     return try perform(as: WinSDK.ISensorManager.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetEventSink(pThis, RawPointer(pEvents))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetEventSink(pThis, RawPointer(pEvents)))
     }
   }
 }

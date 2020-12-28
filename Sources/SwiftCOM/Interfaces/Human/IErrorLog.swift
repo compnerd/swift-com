@@ -13,12 +13,13 @@ public class IErrorLog: IUnknown {
   public func AddError(_ szPropName: String, _ pExcepInfo: [EXCEPINFO]) throws {
     return try perform(as: WinSDK.IErrorLog.self) { pThis in
       var pExcepInfo = pExcepInfo
-      let hr: HRESULT = szPropName.withCString(encodedAs: UTF16.self) { pwszPropName in
-        pExcepInfo.withUnsafeMutableBufferPointer {
-          pThis.pointee.lpVtbl.pointee.AddError(pThis, pwszPropName, $0.baseAddress)
+      try CHECKED {
+        szPropName.withCString(encodedAs: UTF16.self) { pwszPropName in
+          pExcepInfo.withUnsafeMutableBufferPointer {
+            pThis.pointee.lpVtbl.pointee.AddError(pThis, pwszPropName, $0.baseAddress)
+          }
         }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 }

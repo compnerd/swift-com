@@ -13,9 +13,7 @@ public class IWICBitmapDecoderInfo: IWICBitmapCodecInfo {
   public func CreateInstance() throws -> IWICBitmapDecoder {
     return try perform(as: WinSDK.IWICBitmapDecoderInfo.self) { pThis in
       var pIBitmapDecoder: UnsafeMutablePointer<WinSDK.IWICBitmapDecoder>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, &pIBitmapDecoder)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, &pIBitmapDecoder))
       return IWICBitmapDecoder(pUnk: pIBitmapDecoder)
     }
   }
@@ -24,17 +22,10 @@ public class IWICBitmapDecoderInfo: IWICBitmapCodecInfo {
     return try perform(as: WinSDK.IWICBitmapDecoderInfo.self) { pThis in
       var cPatterns: UINT = UINT(0)
       var cbPatternsActual: UINT = UINT(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetPatterns(pThis, 0, nil, &cPatterns,
-                                                  &cbPatternsActual)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetPatterns(pThis, 0, nil, &cPatterns, &cbPatternsActual))
 
       return try Array<WICBitmapPattern>(unsafeUninitializedCapacity: Int(cPatterns)) {
-        let hr: HRESULT =
-            pThis.pointee.lpVtbl.pointee.GetPatterns(pThis, UINT($0.count),
-                                                    $0.baseAddress, &cPatterns,
-                                                    &cbPatternsActual)
-        guard hr == S_OK else { throw COMError(hr: hr) }
+        try CHECKED(pThis.pointee.lpVtbl.pointee.GetPatterns(pThis, UINT($0.count), $0.baseAddress, &cPatterns, &cbPatternsActual))
         $1 = Int(cPatterns)
       }
     }
@@ -43,10 +34,7 @@ public class IWICBitmapDecoderInfo: IWICBitmapCodecInfo {
   public func MatchesPattern(_ pIStream: IStream) throws -> Bool {
     return try perform(as: WinSDK.IWICBitmapDecoderInfo.self) { pThis in
       var fMatches: WindowsBool = false
-      let hr: HRESULT =
-        pThis.pointee.lpVtbl.pointee.MatchesPattern(pThis, RawPointer(pIStream),
-                                                    &fMatches)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.MatchesPattern(pThis, RawPointer(pIStream), &fMatches))
       return fMatches == true
     }
   }

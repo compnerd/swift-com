@@ -14,10 +14,7 @@ public class IOperationsProgressDialog: IUnknown {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
       var ullElapsed: ULONGLONG = 0
       var ullRemaining: ULONGLONG = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetMilliseconds(pThis, &ullElapsed,
-                                                      &ullRemaining)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetMilliseconds(pThis, &ullElapsed, &ullRemaining))
       return (ullElapsed, ullRemaining)
     }
   }
@@ -25,72 +22,57 @@ public class IOperationsProgressDialog: IUnknown {
   public func GetOperationStatus() throws -> PDOPSTATUS {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
       var opstatus: PDOPSTATUS = PDOPSTATUS(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetOperationStatus(pThis, &opstatus)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetOperationStatus(pThis, &opstatus))
       return opstatus
     }
   }
 
   public func PauseTimer() throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.PauseTimer(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.PauseTimer(pThis))
     }
   }
 
   public func ResetTimer() throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.ResetTimer(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.ResetTimer(pThis))
     }
   }
 
   public func ResumeTimer() throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.ResumeTimer(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.ResumeTimer(pThis))
     }
   }
 
   public func SetMode(_ mode: PDMODE) throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.SetMode(pThis, mode)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetMode(pThis, mode))
     }
   }
 
   public func SetOperation(_ action: SPACTION) throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.SetOperation(pThis, action)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetOperation(pThis, action))
     }
   }
 
   public func StartProgressDialog(_ hwnd: HWND, _ flags: OPPROGDLGF) throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.StartProgressDialog(pThis, hwnd, flags)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.StartProgressDialog(pThis, hwnd, flags))
     }
   }
 
   public func StopProgressDialog() throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.StopProgressDialog(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.StopProgressDialog(pThis))
     }
   }
 
   public func UpdateLocations(_ psiSource: IShellItem, _ psiTarget: IShellItem,
                               _ psiItem: IShellItem) throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.UpdateLocations(pThis,
-                                                      RawPointer(psiSource),
-                                                      RawPointer(psiTarget),
-                                                      RawPointer(psiItem))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.UpdateLocations(pThis, RawPointer(psiSource), RawPointer(psiTarget), RawPointer(psiItem)))
     }
   }
 
@@ -101,14 +83,7 @@ public class IOperationsProgressDialog: IUnknown {
                              _ ullItemsCurrent: ULONGLONG,
                              _ ullItemsTotal: ULONGLONG) throws {
     return try perform(as: WinSDK.IOperationsProgressDialog.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.UpdateProgress(pThis, ullPointsCurrent,
-                                                      ullPointsTotal,
-                                                      ullSizeCurrent,
-                                                      ullSizeTotal,
-                                                      ullItemsCurrent,
-                                                      ullItemsTotal)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.UpdateProgress(pThis, ullPointsCurrent, ullPointsTotal, ullSizeCurrent, ullSizeTotal, ullItemsCurrent, ullItemsTotal))
     }
   }
 }

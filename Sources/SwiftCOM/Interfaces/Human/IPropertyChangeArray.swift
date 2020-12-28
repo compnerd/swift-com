@@ -12,18 +12,13 @@ public class IPropertyChangeArray: IUnknown {
 
   public func Append(_ ppropChange: IPropertyChange) throws {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Append(pThis, RawPointer(ppropChange))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Append(pThis, RawPointer(ppropChange)))
     }
   }
 
   public func AppendOrReplace(_ ppropChange: IPropertyChange) throws {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.AppendOrReplace(pThis,
-                                                      RawPointer(ppropChange))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.AppendOrReplace(pThis, RawPointer(ppropChange)))
     }
   }
 
@@ -31,9 +26,7 @@ public class IPropertyChangeArray: IUnknown {
       throws -> IUnknown {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
       var pv: UnsafeMutableRawPointer?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetAt(pThis, iIndex, &riid, &pv)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetAt(pThis, iIndex, &riid, &pv))
       return IUnknown(pUnk: pv)
     }
   }
@@ -41,18 +34,14 @@ public class IPropertyChangeArray: IUnknown {
   public func GetCount() throws -> UINT {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
       var cOperations: UINT = 0
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cOperations)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cOperations))
       return cOperations
     }
   }
 
   public func InsertAt(_ iIndex: UINT, _ ppropChange: IPropertyChange) throws {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.InsertAt(pThis, iIndex,
-                                                RawPointer(ppropChange))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.InsertAt(pThis, iIndex, RawPointer(ppropChange)))
     }
   }
 
@@ -69,8 +58,7 @@ public class IPropertyChangeArray: IUnknown {
 
   public func RemoveAt(_ iIndex: UINT) throws {
     return try perform(as: WinSDK.IPropertyChangeArray.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, iIndex)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, iIndex))
     }
   }
 }

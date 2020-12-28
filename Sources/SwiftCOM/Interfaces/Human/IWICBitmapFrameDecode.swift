@@ -13,18 +13,11 @@ public class IWICBitmapFrameDecode: IWICBitmapSource {
   public func GetColorContexts() throws -> [IWICColorContext] {
     return try perform(as: WinSDK.IWICBitmapFrameDecode.self) { pThis in
       var cActualCount: UINT = UINT(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetColorContexts(pThis, 0, nil,
-                                                        &cActualCount)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetColorContexts(pThis, 0, nil, &cActualCount))
 
       let contexts: [UnsafeMutablePointer<WinSDK.IWICColorContext>?] =
           try .init(unsafeUninitializedCapacity: Int(cActualCount)) {
-        let hr: HRESULT =
-            pThis.pointee.lpVtbl.pointee.GetColorContexts(pThis, cActualCount,
-                                                          $0.baseAddress,
-                                                          &cActualCount)
-        guard hr == S_OK else { throw COMError(hr: hr) }
+        try CHECKED(pThis.pointee.lpVtbl.pointee.GetColorContexts(pThis, cActualCount, $0.baseAddress, &cActualCount))
         $1 = Int(cActualCount)
       }
 
@@ -35,10 +28,7 @@ public class IWICBitmapFrameDecode: IWICBitmapSource {
   public func GetMetadataQueryReader() throws -> IWICMetadataQueryReader {
     return try perform(as: WinSDK.IWICBitmapFrameDecode.self) { pThis in
       var pIMetadataQueryReader: UnsafeMutablePointer<WinSDK.IWICMetadataQueryReader>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetMetadataQueryReader(pThis,
-                                                              &pIMetadataQueryReader)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetMetadataQueryReader(pThis, &pIMetadataQueryReader))
       return IWICMetadataQueryReader(pUnk: pIMetadataQueryReader)
     }
   }
@@ -46,10 +36,7 @@ public class IWICBitmapFrameDecode: IWICBitmapSource {
   public func GetThumbnail() throws -> IWICBitmapSource {
     return try perform(as: WinSDK.IWICBitmapFrameDecode.self) { pThis in
       var pIBitmapSource: UnsafeMutablePointer<WinSDK.IWICBitmapSource>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetThumbnail(pThis, &pIBitmapSource)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetThumbnail(pThis, &pIBitmapSource))
       return IWICBitmapSource(pUnk: pIBitmapSource)
     }
   }

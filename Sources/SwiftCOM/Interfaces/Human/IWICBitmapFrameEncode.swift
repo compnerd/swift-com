@@ -12,28 +12,21 @@ public class IWICBitmapFrameEncode: IUnknown {
 
   public func Commit() throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Commit(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Commit(pThis))
     }
   }
 
   public func GetMetadataQueryWriter() throws -> IWICMetadataQueryWriter {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
       var pIMetadataQueryWriter: UnsafeMutablePointer<WinSDK.IWICMetadataQueryWriter>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetMetadataQueryWriter(pThis,
-                                                              &pIMetadataQueryWriter)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetMetadataQueryWriter(pThis, &pIMetadataQueryWriter))
       return IWICMetadataQueryWriter(pUnk: pIMetadataQueryWriter)
     }
   }
 
   public func Initialize(_ pIEncoderOptions: IPropertyBag2) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis,
-                                                  RawPointer(pIEncoderOptions))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pIEncoderOptions)))
     }
   }
 
@@ -41,72 +34,61 @@ public class IWICBitmapFrameEncode: IUnknown {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
       var pointers: [UnsafeMutablePointer<WinSDK.IWICColorContext>?] =
           contexts.map { RawPointer($0) }
-      let hr: HRESULT = pointers.withUnsafeMutableBufferPointer {
-        pThis.pointee.lpVtbl.pointee.SetColorContexts(pThis, UINT($0.count),
-                                                      $0.baseAddress)
+      try CHECKED {
+        pointers.withUnsafeMutableBufferPointer {
+          pThis.pointee.lpVtbl.pointee.SetColorContexts(pThis, UINT($0.count), $0.baseAddress)
+        }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 
   public func SetPalette(_ pIPalette: IWICPalette) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetPalette(pThis, RawPointer(pIPalette))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPalette(pThis, RawPointer(pIPalette)))
     }
   }
 
   public func SetPixelFormat(_ pPixelFormat: inout WICPixelFormatGUID) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetPixelFormat(pThis, &pPixelFormat)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPixelFormat(pThis, &pPixelFormat))
     }
   }
 
   public func SetResolution(_ dpiX: Double, _ dpiY: Double) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetResolution(pThis, dpiX, dpiY)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetResolution(pThis, dpiX, dpiY))
     }
   }
 
   public func SetSize(_ uiWidth: UINT, _ uiHeight: UINT) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetSize(pThis, uiWidth, uiHeight)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetSize(pThis, uiWidth, uiHeight))
     }
   }
 
   public func SetThumbnail(_ pIThumbnail: IWICBitmapSource) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.SetThumbnail(pThis,
-                                                    RawPointer(pIThumbnail))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetThumbnail(pThis, RawPointer(pIThumbnail)))
     }
   }
 
   public func WritePixels(_ lineCount: UINT, _ cbStride: UINT, _ pixels: inout [BYTE]) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT = pixels.withUnsafeMutableBufferPointer {
-        pThis.pointee.lpVtbl.pointee.WritePixels(pThis, lineCount, cbStride,
-                                                UINT($0.count), $0.baseAddress)
+      try CHECKED {
+        pixels.withUnsafeMutableBufferPointer {
+          pThis.pointee.lpVtbl.pointee.WritePixels(pThis, lineCount, cbStride, UINT($0.count), $0.baseAddress)
+        }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 
   public func WriteSource(_ pIBitmapSource: IWICBitmapSource, _ rc: inout WICRect) throws {
     return try perform(as: WinSDK.IWICBitmapFrameEncode.self) { pThis in
-      let hr: HRESULT = withUnsafeMutablePointer(to: &rc) {
-        pThis.pointee.lpVtbl.pointee.WriteSource(pThis,
-                                                RawPointer(pIBitmapSource), $0)
+      try CHECKED {
+        withUnsafeMutablePointer(to: &rc) {
+          pThis.pointee.lpVtbl.pointee.WriteSource(pThis, RawPointer(pIBitmapSource), $0)
+        }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 }

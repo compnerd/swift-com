@@ -12,18 +12,14 @@ public class IWICFastMetadataEncoder: IUnknown {
 
   public func Commit() throws {
     return try perform(as: WinSDK.IWICFastMetadataEncoder.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Commit(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Commit(pThis))
     }
   }
 
   public func GetMetadataQueryWriter() throws -> IWICMetadataQueryWriter {
     return try perform(as: WinSDK.IWICFastMetadataEncoder.self) { pThis in
       var pIMetadataQueryWriter: UnsafeMutablePointer<WinSDK.IWICMetadataQueryWriter>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetMetadataQueryWriter(pThis,
-                                                              &pIMetadataQueryWriter)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetMetadataQueryWriter(pThis, &pIMetadataQueryWriter))
       return IWICMetadataQueryWriter(pUnk: pIMetadataQueryWriter)
     }
   }
