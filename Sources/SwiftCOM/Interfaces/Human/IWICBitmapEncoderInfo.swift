@@ -13,9 +13,7 @@ public class IWICBitmapEncoderInfo: IWICBitmapCodecInfo {
   public func CreateInstance() throws -> IWICBitmapEncoder {
     return try perform(as: WinSDK.IWICBitmapEncoderInfo.self) { pThis in
       var pIBitmapEncoder: UnsafeMutablePointer<WinSDK.IWICBitmapEncoder>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, &pIBitmapEncoder)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CreateInstance(pThis, &pIBitmapEncoder))
       return IWICBitmapEncoder(pUnk: pIBitmapEncoder)
     }
   }

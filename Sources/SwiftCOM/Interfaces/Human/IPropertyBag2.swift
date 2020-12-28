@@ -13,9 +13,7 @@ public class IPropertyBag2: IUnknown {
   public func CountProperties() throws -> ULONG {
     return try perform(as: WinSDK.IPropertyBag2.self) { pThis in
       var cProperties: ULONG = ULONG(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.CountProperties(pThis, &cProperties)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.CountProperties(pThis, &cProperties))
       return cProperties
     }
   }
@@ -25,11 +23,7 @@ public class IPropertyBag2: IUnknown {
     return try perform(as: WinSDK.IPropertyBag2.self) { pThis in
       return try Array<PROPBAG2>(unsafeUninitializedCapacity: Int(cProperties)) {
         var count: ULONG = ULONG(0)
-        let hr: HRESULT =
-            pThis.pointee.lpVtbl.pointee.GetPropertyInfo(pThis, iProperty,
-                                                        cProperties,
-                                                        $0.baseAddress, &count)
-        guard hr == S_OK else { throw COMError(hr: hr) }
+        try CHECKED(pThis.pointee.lpVtbl.pointee.GetPropertyInfo(pThis, iProperty, cProperties, $0.baseAddress, &count))
         $1 = Int(count)
       }
     }
@@ -38,12 +32,11 @@ public class IPropertyBag2: IUnknown {
   public func LoadObject(_ strName: String, _ dwHint: DWORD,
                          _ pUnkObject: IUnknown, _ pErrLog: IErrorLog) throws {
     return try perform(as: WinSDK.IPropertyBag2.self) { pThis in
-      let hr: HRESULT = strName.withCString(encodedAs: UTF16.self) {
-        pThis.pointee.lpVtbl.pointee.LoadObject(pThis, $0, dwHint,
-                                                RawPointer(pUnkObject),
-                                                RawPointer(pErrLog))
+      try CHECKED {
+        strName.withCString(encodedAs: UTF16.self) {
+          pThis.pointee.lpVtbl.pointee.LoadObject(pThis, $0, dwHint, RawPointer(pUnkObject), RawPointer(pErrLog))
+        }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 
@@ -55,12 +48,11 @@ public class IPropertyBag2: IUnknown {
           Array<HRESULT>(repeating: S_OK, count: pPropBag.count)
       let varValue: [VARIANT] =
           try Array<VARIANT>(unsafeUninitializedCapacity: pPropBag.count) { pvarValue, count in
-        let hr: HRESULT = pPropBag.withUnsafeMutableBufferPointer {
-          pThis.pointee.lpVtbl.pointee.Read(pThis, ULONG($0.count), $0.baseAddress,
-                                            RawPointer(pErrLog), pvarValue.baseAddress,
-                                            &hrError)
+        try CHECKED {
+          pPropBag.withUnsafeMutableBufferPointer {
+            pThis.pointee.lpVtbl.pointee.Read(pThis, ULONG($0.count), $0.baseAddress, RawPointer(pErrLog), pvarValue.baseAddress, &hrError)
+          }
         }
-        guard hr == S_OK else { throw COMError(hr: hr) }
         count = pPropBag.count
       }
       return zip(varValue, hrError).map { ($0.0, $0.1) }
@@ -75,14 +67,13 @@ public class IPropertyBag2: IUnknown {
     return try perform(as: WinSDK.IPropertyBag2.self) { pThis in
       var properties = properties
       var values = values
-      let hr: HRESULT = properties.withUnsafeMutableBufferPointer { pPropBag in
-        values.withUnsafeMutableBufferPointer { pvarValue in
-          pThis.pointee.lpVtbl.pointee.Write(pThis, ULONG(pPropBag.count),
-                                            pPropBag.baseAddress,
-                                            pvarValue.baseAddress)
+      try CHECKED {
+        properties.withUnsafeMutableBufferPointer { pPropBag in
+          values.withUnsafeMutableBufferPointer { pvarValue in
+            pThis.pointee.lpVtbl.pointee.Write(pThis, ULONG(pPropBag.count), pPropBag.baseAddress, pvarValue.baseAddress)
+          }
         }
       }
-      guard hr == S_OK else { throw COMError(hr: hr) }
     }
   }
 }

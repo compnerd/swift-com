@@ -12,25 +12,20 @@ public class IPortableDeviceValuesCollection: IUnknown {
 
   public func Add(_ pValues: IPortableDeviceValues) throws {
     return try perform(as: WinSDK.IPortableDeviceValuesCollection.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Add(pThis, RawPointer(pValues))
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Add(pThis, RawPointer(pValues)))
     }
   }
 
   public func Clear() throws {
     return try perform(as: WinSDK.IPortableDeviceValuesCollection.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Clear(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Clear(pThis))
     }
   }
 
   public func GetAt(_ dwIndex: DWORD) throws -> IPortableDeviceValues {
     return try perform(as: WinSDK.IPortableDeviceValuesCollection.self) { pThis in
       var pValues: UnsafeMutablePointer<WinSDK.IPortableDeviceValues>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetAt(pThis, dwIndex, &pValues)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetAt(pThis, dwIndex, &pValues))
       return IPortableDeviceValues(pUnk: pValues)
     }
   }
@@ -38,16 +33,14 @@ public class IPortableDeviceValuesCollection: IUnknown {
   public func GetCount() throws -> DWORD {
     return try perform(as: WinSDK.IPortableDeviceValuesCollection.self) { pThis in
       var cElems: DWORD = DWORD(0)
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cElems)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cElems))
       return cElems
     }
   }
 
   public func RemoveAt(_ dwIndex: DWORD) throws {
     return try perform(as: WinSDK.IPortableDeviceValuesCollection.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, dwIndex)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, dwIndex))
     }
   }
 }

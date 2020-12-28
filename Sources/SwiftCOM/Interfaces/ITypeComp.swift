@@ -22,10 +22,7 @@ open class ITypeComp: IUnknown {
       var pTInfo: UnsafeMutablePointer<WinSDK.ITypeInfo>?
       var DescKind: DESCKIND = DESCKIND_MAX
       var BindPtr: BINDPTR = BINDPTR()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Bind(pThis, &szName, lHashVal, wFlags,
-                                            &pTInfo, &DescKind, &BindPtr)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Bind(pThis, &szName, lHashVal, wFlags, &pTInfo, &DescKind, &BindPtr))
       return (ITypeInfo(pUnk: pTInfo), DescKind, BindPtr)
     }
   }
@@ -37,10 +34,7 @@ open class ITypeComp: IUnknown {
       var szName: [OLECHAR] = Array<OLECHAR>(from: name)
       var pTInfo: UnsafeMutablePointer<WinSDK.ITypeInfo>?
       var pTComp: UnsafeMutablePointer<WinSDK.ITypeComp>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.BindType(pThis, &szName, lHashVal,
-                                                &pTInfo, &pTComp)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.BindType(pThis, &szName, lHashVal, &pTInfo, &pTComp))
       return (ITypeInfo(pUnk: pTInfo), ITypeComp(pUnk: pTComp))
     }
   }

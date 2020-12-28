@@ -13,10 +13,7 @@ public class IWICBitmapClipper: IWICBitmapSource {
   public func Initialize(_ pISource: IWICBitmapSource, _ rc: WICRect) throws {
     return try perform(as: WinSDK.IWICBitmapClipper.self) { pThis in
       var rc = rc
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource),
-                                                  &rc)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Initialize(pThis, RawPointer(pISource), &rc))
     }
   }
 }

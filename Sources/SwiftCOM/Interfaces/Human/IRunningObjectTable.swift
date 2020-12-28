@@ -13,9 +13,7 @@ public class IRunningObjectTable: IUnknown {
   public func EnumRunning() throws -> IEnumMoniker {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
       var penumMoniker: UnsafeMutablePointer<WinSDK.IEnumMoniker>?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.EnumRunning(pThis, &penumMoniker)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.EnumRunning(pThis, &penumMoniker))
       return IEnumMoniker(pUnk: penumMoniker)
     }
   }
@@ -26,10 +24,7 @@ public class IRunningObjectTable: IUnknown {
       // FIXME(compnerd) GetObject is also a free function which has a unicode and
       // ascii version. As a result, `GetObject` is a macro which happens to
       // expand incorrectly to `GetObjectA` here.
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetObjectA(pThis, RawPointer(pmkObjectName),
-                                                  &punkObject)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetObjectA(pThis, RawPointer(pmkObjectName), &punkObject))
       return IUnknown(pUnk: punkObject)
     }
   }
@@ -37,27 +32,21 @@ public class IRunningObjectTable: IUnknown {
   public func GetTimeOfLastChange(_ pmkObjectName: IMoniker) throws -> FILETIME {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
       var filetime: FILETIME = FILETIME()
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee
-                            .GetTimeOfLastChange(pThis, RawPointer(pmkObjectName),
-                                                &filetime)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetTimeOfLastChange(pThis, RawPointer(pmkObjectName), &filetime))
       return filetime
     }
   }
 
   public func IsRunning(_ pmkObjectName: IMoniker) throws -> Bool {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
-      return pThis.pointee.lpVtbl.pointee.IsRunning(pThis,
-                                                    RawPointer(pmkObjectName)) == S_OK
+      return pThis.pointee.lpVtbl.pointee.IsRunning(pThis, RawPointer(pmkObjectName)) == S_OK
     }
   }
 
   public func NoteChangeTime(_ dwRegister: DWORD) throws -> FILETIME {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
       var filetime: FILETIME = FILETIME()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.NoteChangeTime(pThis, dwRegister, &filetime)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.NoteChangeTime(pThis, dwRegister, &filetime))
       return filetime
     }
   }
@@ -66,20 +55,14 @@ public class IRunningObjectTable: IUnknown {
                        _ pmkObjectName: IMoniker) throws -> DWORD {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
       var dwRegister: DWORD = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Register(pThis, grfFlags, punkObject.pUnk,
-                                                RawPointer(pmkObjectName),
-                                                &dwRegister)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Register(pThis, grfFlags, punkObject.pUnk, RawPointer(pmkObjectName), &dwRegister))
       return dwRegister
     }
   }
 
   public func Revoke(_ dwRegister: DWORD) throws {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Revoke(pThis, dwRegister)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Revoke(pThis, dwRegister))
     }
   }
 }

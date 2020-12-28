@@ -13,8 +13,7 @@ public class IEnumMoniker: IUnknown {
   public func Clone() throws -> IEnumMoniker {
     return try perform(as: WinSDK.IEnumMoniker.self) { pThis in
       var penum: UnsafeMutablePointer<WinSDK.IEnumMoniker>?
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Clone(pThis, &penum)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Clone(pThis, &penum))
       return IEnumMoniker(pUnk: penum)
     }
   }
@@ -23,10 +22,7 @@ public class IEnumMoniker: IUnknown {
     return try perform(as: WinSDK.IEnumMoniker.self) { pThis in
       var rgelt: UnsafeMutablePointer<WinSDK.IMoniker>?
       var celtFetched: ULONG = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Next(pThis, celt, &rgelt, &celtFetched)
-      guard hr == S_OK else { throw COMError(hr: hr) }
-
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Next(pThis, celt, &rgelt, &celtFetched))
       defer { CoTaskMemFree(rgelt) }
 
       var monikers: [IMoniker] = []
@@ -43,15 +39,13 @@ public class IEnumMoniker: IUnknown {
 
   public func Reset() throws {
     return try perform(as: WinSDK.IEnumMoniker.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Reset(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Reset(pThis))
     }
   }
 
   public func Skip(_ celt: ULONG) throws {
     return try perform(as: WinSDK.IEnumMoniker.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Skip(pThis, celt)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Skip(pThis, celt))
     }
   }
 }

@@ -12,23 +12,20 @@ public class IPortableDeviceKeyCollection: IUnknown {
 
   public func Add(_ Key: REFPROPERTYKEY) throws {
     return try perform(as: WinSDK.IPortableDeviceKeyCollection.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Add(pThis, Key)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Add(pThis, Key))
     }
   }
 
   public func Clear() throws {
     return try perform(as: WinSDK.IPortableDeviceKeyCollection.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Clear(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Clear(pThis))
     }
   }
 
   public func GetAt(_ dwIndex: DWORD) throws -> PROPERTYKEY {
     return try perform(as: WinSDK.IPortableDeviceKeyCollection.self) { pThis in
       var Key: PROPERTYKEY = PROPERTYKEY()
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetAt(pThis, dwIndex, &Key)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetAt(pThis, dwIndex, &Key))
       return Key
     }
   }
@@ -36,16 +33,14 @@ public class IPortableDeviceKeyCollection: IUnknown {
   public func GetCount() throws -> DWORD {
     return try perform(as: WinSDK.IPortableDeviceKeyCollection.self) { pThis in
       var cElems: DWORD = DWORD(0)
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cElems)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetCount(pThis, &cElems))
       return cElems
     }
   }
 
   public func RemoveAt(_ dwIndex: DWORD) throws {
     return try perform(as: WinSDK.IPortableDeviceKeyCollection.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, dwIndex)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.RemoveAt(pThis, dwIndex))
     }
   }
 }

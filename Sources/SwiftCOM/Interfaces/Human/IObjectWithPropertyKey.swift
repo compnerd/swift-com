@@ -13,16 +13,14 @@ public class IObjectWithPropertyKey: IUnknown {
   public func GetPropertyKey() throws -> PROPERTYKEY {
     return try perform(as: WinSDK.IObjectWithPropertyKey.self) { pThis in
       var key: PROPERTYKEY = PROPERTYKEY()
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetPropertyKey(pThis, &key)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetPropertyKey(pThis, &key))
       return key
     }
   }
 
   public func SetPropertyKey(_ key: REFPROPERTYKEY) throws {
     return try perform(as: WinSDK.IObjectWithPropertyKey.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.SetPropertyKey(pThis, key)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPropertyKey(pThis, key))
     }
   }
 }

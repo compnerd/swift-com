@@ -14,10 +14,7 @@ public class IWICBitmapLock: IUnknown {
     return try perform(as: WinSDK.IWICBitmapLock.self) { pThis in
       var cbBufferSize: UINT = UINT(0)
       var pbData: WICInProcPointer?
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetDataPointer(pThis, &cbBufferSize,
-                                                      &pbData)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDataPointer(pThis, &cbBufferSize, &pbData))
       return Array<BYTE>(UnsafeBufferPointer<BYTE>(start: pbData,
                                                   count: Int(cbBufferSize)))
     }
@@ -26,9 +23,7 @@ public class IWICBitmapLock: IUnknown {
   public func GetPixelFormat() throws -> WICPixelFormatGUID {
     return try perform(as: WinSDK.IWICBitmapLock.self) { pThis in
       var PixelFormat: WICPixelFormatGUID = WICPixelFormatGUID()
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetPixelFormat(pThis, &PixelFormat)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetPixelFormat(pThis, &PixelFormat))
       return PixelFormat
     }
   }
@@ -37,9 +32,7 @@ public class IWICBitmapLock: IUnknown {
     return try perform(as: WinSDK.IWICBitmapLock.self) { pThis in
       var uiWidth: UINT = UINT(0)
       var uiHeight: UINT = UINT(0)
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.GetSize(pThis, &uiWidth, &uiHeight)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetSize(pThis, &uiWidth, &uiHeight))
       return (uiWidth, uiHeight)
     }
   }
@@ -47,8 +40,7 @@ public class IWICBitmapLock: IUnknown {
   public func GetStride() throws -> UINT {
     return try perform(as: WinSDK.IWICBitmapLock.self) { pThis in
       var cbStride: UINT = UINT(0)
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.GetStride(pThis, &cbStride)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetStride(pThis, &cbStride))
       return cbStride
     }
   }

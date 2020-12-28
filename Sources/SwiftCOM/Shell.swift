@@ -10,9 +10,7 @@ import WinSDK
 public func SHCreateItemFromParsingName(_ pszPath: String, _ pbc: IBindCtx?,
                                         _ riid: inout IID) throws -> IUnknown {
   var pv: UnsafeMutableRawPointer?
-  let hr: HRESULT =
-      SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv)
-  guard hr == S_OK else { throw COMError(hr: hr) }
+  try CHECKED(SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv))
   return IUnknown(pUnk: pv)
 }
 
@@ -21,8 +19,6 @@ public func SHCreateItemFromParsingName<T: IUnknown>(_ pszPath: String,
     throws -> T {
   var riid: IID = T.IID
   var pv: UnsafeMutableRawPointer?
-  let hr: HRESULT =
-      SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv)
-  guard hr == S_OK else { throw COMError(hr: hr) }
+  try CHECKED(SHCreateItemFromParsingName(pszPath.wide, RawPointer(pbc), &riid, &pv))
   return T(pUnk: pv)
 }

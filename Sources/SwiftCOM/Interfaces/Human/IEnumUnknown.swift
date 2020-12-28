@@ -13,8 +13,7 @@ public class IEnumUnknown: IUnknown {
   public func Clone() throws -> IEnumUnknown {
     return try perform(as: WinSDK.IEnumUnknown.self) { pThis in
       var penum: UnsafeMutablePointer<WinSDK.IEnumUnknown>?
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Clone(pThis, &penum)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Clone(pThis, &penum))
       return IEnumUnknown(pUnk: penum)
     }
   }
@@ -23,9 +22,7 @@ public class IEnumUnknown: IUnknown {
     return try perform(as: WinSDK.IEnumUnknown.self) { pThis in
       var rgelt: UnsafeMutablePointer<WinSDK.IUnknown>?
       var celtFetched: ULONG = 0
-      let hr: HRESULT =
-          pThis.pointee.lpVtbl.pointee.Next(pThis, celt, &rgelt, &celtFetched)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Next(pThis, celt, &rgelt, &celtFetched))
 
       var result: [IUnknown] = []
       result.reserveCapacity(Int(celtFetched))
@@ -41,15 +38,13 @@ public class IEnumUnknown: IUnknown {
 
   public func Reset() throws {
     return try perform(as: WinSDK.IEnumUnknown.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Reset(pThis)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Reset(pThis))
     }
   }
 
   public func Skip(_ celt: ULONG) throws {
     return try perform(as: WinSDK.IEnumUnknown.self) { pThis in
-      let hr: HRESULT = pThis.pointee.lpVtbl.pointee.Skip(pThis, celt)
-      guard hr == S_OK else { throw COMError(hr: hr) }
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Skip(pThis, celt))
     }
   }
 }
