@@ -26,14 +26,14 @@ open class IUnknown {
   /// the interface by a reference to its interface identifier (IID).  If the
   /// COM object implements the interface, then it returns a pointer to that
   /// interface after calling `IUnknown::AddRef` on it.
-  public func QueryInterface(iid: IID) throws -> IUnknown {
+  public func QueryInterface(iid: IID) throws -> UnsafeMutableRawPointer? {
     guard let pUnk = self.pUnk else { throw COMError(hr: E_INVALIDARG) }
 
     var iid: IID = iid
 
     var pointer: UnsafeMutableRawPointer?
     try CHECKED(pUnk.pointee.lpVtbl.pointee.QueryInterface(pUnk, &iid, &pointer))
-    return IUnknown(pUnk: pointer)
+    return pointer
   }
 
   /// Increments the reference count for an interface pointer to a COM object.
@@ -75,5 +75,16 @@ extension IUnknown {
     let pThis = pUnk.bindMemory(to: Type.self, capacity: 1)
 
     return try body(pThis)
+  }
+}
+
+extension IUnknown {
+  public func QueryInterface<Interface: IUnknown>() throws -> Interface {
+    guard let pUnk = self.pUnk else { throw COMError(hr: E_INVALIDARG) }
+
+    var iid: IID = Interface.IID
+    var pointer: UnsafeMutableRawPointer?
+    try CHECKED(pUnk.pointee.lpVtbl.pointee.QueryInterface(pUnk, &iid, &pointer))
+    return Interface(pUnk: pointer)
   }
 }
