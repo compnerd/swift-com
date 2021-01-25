@@ -7,6 +7,6 @@
 
 import WinSDK
 
-public class ID3D12Pageable: ID3D12Object {
+public class ID3D12Pageable: ID3D12DeviceChild {
   override public class var IID: IID { IID_ID3D12Pageable }
 }
