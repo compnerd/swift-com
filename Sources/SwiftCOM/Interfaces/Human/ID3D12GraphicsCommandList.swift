@@ -28,7 +28,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func ClearRenderTargetView(_ RenderTargetView: D3D12_CPU_DESCRIPTOR_HANDLE, _ ColorRGBA: (FLOAT, FLOAT, FLOAT, FLOAT), _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>) throws {
+  public func ClearRenderTargetView(_ RenderTargetView: D3D12_CPU_DESCRIPTOR_HANDLE, _ ColorRGBA: (FLOAT, FLOAT, FLOAT, FLOAT), _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       var ColorRGBA = ColorRGBA
       withUnsafeBytes(of: &ColorRGBA) {
@@ -169,7 +169,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func Reset(_ pAllocator: ID3D12CommandAllocator, _ pInitialState: ID3D12PipelineState) throws {
+  public func Reset(_ pAllocator: ID3D12CommandAllocator?, _ pInitialState: ID3D12PipelineState?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       try CHECKED(pThis.pointee.lpVtbl.pointee.Reset(pThis, RawPointer(pAllocator), RawPointer(pInitialState)))
     }
