@@ -7,7 +7,7 @@
 
 import WinSDK
 
-internal func RawPointer<T: IUnknown, U>(_ pUnk: T?)
+public func RawPointer<T: IUnknown, U>(_ pUnk: T?)
     -> UnsafeMutablePointer<U>? {
   guard let pUnk = pUnk else { return nil }
   if let pUnk: UnsafeMutableRawPointer = UnsafeMutableRawPointer(pUnk.pUnk) {
