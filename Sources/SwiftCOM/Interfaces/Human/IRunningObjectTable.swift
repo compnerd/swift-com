@@ -55,7 +55,7 @@ public class IRunningObjectTable: IUnknown {
                        _ pmkObjectName: IMoniker) throws -> DWORD {
     return try perform(as: WinSDK.IRunningObjectTable.self) { pThis in
       var dwRegister: DWORD = 0
-      try CHECKED(pThis.pointee.lpVtbl.pointee.Register(pThis, grfFlags, punkObject.pUnk, RawPointer(pmkObjectName), &dwRegister))
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Register(pThis, grfFlags, RawPointer(punkObject), RawPointer(pmkObjectName), &dwRegister))
       return dwRegister
     }
   }

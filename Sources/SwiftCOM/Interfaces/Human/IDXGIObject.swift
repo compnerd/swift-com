@@ -32,7 +32,7 @@ public class IDXGIObject: IUnknown {
 
   public func SetPrivateDataInterface(_ Name: REFGUID, _ pData: IUnknown?) throws {
     return try perform(as: WinSDK.IDXGIObject.self) { pThis in
-      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPrivateDataInterface(pThis, Name, pData?.pUnk))
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPrivateDataInterface(pThis, Name, RawPointer(pData)))
     }
   }
 }

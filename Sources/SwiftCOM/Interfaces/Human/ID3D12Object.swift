@@ -35,7 +35,7 @@ public class ID3D12Object: IUnknown {
   public func SetPrivateDataInterface(_ guid: REFGUID,
                                       _ pData: IUnknown?) throws {
     return try perform(as: WinSDK.ID3D12Object.self) { pThis in
-      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPrivateDataInterface(pThis, guid, pData?.pUnk))
+      try CHECKED(pThis.pointee.lpVtbl.pointee.SetPrivateDataInterface(pThis, guid, RawPointer(pData)))
     }
   }
 }

@@ -55,7 +55,7 @@ public class IFileOperation: IUnknown {
 
   public func DeleteItems(_ punkItems: IUnknown) throws {
     return try perform(as: WinSDK.IFileOperation.self) { pThis in
-      try CHECKED(pThis.pointee.lpVtbl.pointee.DeleteItems(pThis, punkItems.pUnk))
+      try CHECKED(pThis.pointee.lpVtbl.pointee.DeleteItems(pThis, RawPointer(punkItems)))
     }
   }
 
