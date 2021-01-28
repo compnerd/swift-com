@@ -7,6 +7,21 @@
 
 import WinSDK
 
+public func CreateDXGIFactory1<Factory: IUnknown>() throws -> Factory {
+  var iid: IID = Factory.IID
+  var pFactory: UnsafeMutableRawPointer?
+  try CHECKED(CreateDXGIFactory1(&iid, &pFactory))
+  return Factory(pUnk: pFactory)
+}
+
+public func CreateDXGIFactory2<Factory: IUnknown>(_ Flags: UINT)
+    throws -> Factory {
+  var iid: IID = Factory.IID
+  var pFactory: UnsafeMutableRawPointer?
+  try CHECKED(CreateDXGIFactory2(Flags, &iid, &pFactory))
+  return Factory(pUnk: pFactory)
+}
+
 public func D3D12CreateDevice<Device: IUnknown>(
     _ pAdapter: IUnknown?, _ MinimumFeatureLevel: D3D_FEATURE_LEVEL
 ) throws -> Device {
@@ -38,4 +53,11 @@ public func D3D12SerializeRootSignature(
     return (ID3DBlob(pUnk: pBlob), ID3DBlob(pUnk: pErrorBlob))
   }
   return (ID3DBlob(pUnk: pBlob), nil)
+}
+
+public func DXGIGetDebugInterface1<Interface: IUnknown>(_ Flags: UINT) throws -> Interface {
+  var iid: IID = Interface.IID
+  var pDebug: UnsafeMutableRawPointer?
+  try CHECKED(DXGIGetDebugInterface1(Flags, &iid, &pDebug))
+  return Interface(pUnk: pDebug)
 }
