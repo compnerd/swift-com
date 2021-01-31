@@ -310,4 +310,27 @@ extension ID3D12Device {
     var iid: IID = Fence.IID
     return try Fence(pUnk: CreateFence(InitialValue, Flags, &iid))
   }
+
+  public func CreateCommittedResource<Resource: IUnknown>(_ HeapProperties: D3D12_HEAP_PROPERTIES?,
+                                      _ HeapFlags: D3D12_HEAP_FLAGS,
+                                      _ Desc: D3D12_RESOURCE_DESC?,
+                                      _ InitialResourceState: D3D12_RESOURCE_STATES,
+                                      _ OptimizedClearValue: D3D12_CLEAR_VALUE?) throws -> Resource {
+    var iid: IID = Resource.IID
+    return try withUnsafeNullablePointer(to: HeapProperties) { pHeapProperties in
+      return try withUnsafeNullablePointer(to: Desc) { pDesc in
+        return try withUnsafeNullablePointer(to: OptimizedClearValue) { pOptimizedClearValue in
+          return try Resource(pUnk: CreateCommittedResource(pHeapProperties, HeapFlags, pDesc, InitialResourceState, pOptimizedClearValue, &iid))
+        }
+      }
+    }
+  }
+
+  public func CreateDepthStencilView(_ pResource: ID3D12Resource?,
+                                     _ Desc: D3D12_DEPTH_STENCIL_VIEW_DESC,
+                                     _ DestDescriptor: D3D12_CPU_DESCRIPTOR_HANDLE) throws {
+    try withUnsafeNullablePointer(to: Desc) { pDesc in
+      try CreateDepthStencilView(pResource, pDesc, DestDescriptor)
+    }
+  }
 }
