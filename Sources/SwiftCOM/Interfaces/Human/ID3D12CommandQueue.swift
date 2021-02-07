@@ -86,3 +86,11 @@ public class ID3D12CommandQueue: ID3D12Pageable {
     }
   }
 }
+
+extension ID3D12CommandQueue {
+  public func ExecuteCommandLists(_ lists: [SwiftCOM.ID3D12CommandList]) throws {
+    var CommandLists: [UnsafeMutablePointer<WinSDK.ID3D12CommandList>?] =
+        lists.map { RawPointer($0) }
+    try ExecuteCommandLists(UINT(CommandLists.count), &CommandLists)
+  }
+}
