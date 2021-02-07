@@ -76,7 +76,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func CopyTiles(_ pTiledResource: ID3D12Resource, _ pTileRegionStartCoordinate: UnsafePointer<D3D12_TILED_RESOURCE_COORDINATE>, _ pTileRegionSize: UnsafePointer<D3D12_TILE_REGION_SIZE>, _ pBuffer: ID3D12Resource, _ BufferStartOffsetInBytes: UINT64, _ Flags: D3D12_TILE_COPY_FLAGS) throws {
+  public func CopyTiles(_ pTiledResource: ID3D12Resource, _ pTileRegionStartCoordinate: UnsafePointer<D3D12_TILED_RESOURCE_COORDINATE>?, _ pTileRegionSize: UnsafePointer<D3D12_TILE_REGION_SIZE>?, _ pBuffer: ID3D12Resource, _ BufferStartOffsetInBytes: UINT64, _ Flags: D3D12_TILE_COPY_FLAGS) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.CopyTiles(pThis, RawPointer(pTiledResource), pTileRegionStartCoordinate, pTileRegionSize, RawPointer(pBuffer), BufferStartOffsetInBytes, Flags)
     }
@@ -211,7 +211,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetComputeRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer, _ DestOffsetIn32BitValues: UINT) throws {
+  public func SetComputeRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer?, _ DestOffsetIn32BitValues: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetComputeRoot32BitConstants(pThis, RootParameterIndex, Num32BitValuesToSet, pSrcData, DestOffsetIn32BitValues)
     }
@@ -259,7 +259,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetGraphicsRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer, _ DestOffsetIn32BitValues: UINT) throws {
+  public func SetGraphicsRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer?, _ DestOffsetIn32BitValues: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetGraphicsRoot32BitConstants(pThis, RootParameterIndex, Num32BitValuesToSet, pSrcData, DestOffsetIn32BitValues)
     }
@@ -283,7 +283,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetGraphicsRootSignature(_ pRootSignature: ID3D12RootSignature) throws {
+  public func SetGraphicsRootSignature(_ pRootSignature: ID3D12RootSignature?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetGraphicsRootSignature(pThis, RawPointer(pRootSignature))
     }
@@ -301,7 +301,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetPipelineState(_ pPipelineState: ID3D12PipelineState) throws {
+  public func SetPipelineState(_ pPipelineState: ID3D12PipelineState?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetPipelineState(pThis, RawPointer(pPipelineState))
     }
