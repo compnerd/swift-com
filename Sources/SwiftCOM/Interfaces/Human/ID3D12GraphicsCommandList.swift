@@ -10,7 +10,7 @@ import WinSDK
 public class ID3D12GraphicsCommandList: ID3D12CommandList {
   override public class var IID: IID { IID_ID3D12GraphicsCommandList }
 
-  public func BeginEvent(_ Metadata: UINT, _ pData: UnsafeRawPointer, _ Size: UINT) throws {
+  public func BeginEvent(_ Metadata: UINT, _ pData: UnsafeRawPointer?, _ Size: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.BeginEvent(pThis, Metadata, pData, Size)
     }
@@ -22,7 +22,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func ClearDepthStencilView(_ DepthStencilView: D3D12_CPU_DESCRIPTOR_HANDLE, _ ClearFlags: D3D12_CLEAR_FLAGS, _ Depth: FLOAT, _ Stencil: UINT8, _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>) throws {
+  public func ClearDepthStencilView(_ DepthStencilView: D3D12_CPU_DESCRIPTOR_HANDLE, _ ClearFlags: D3D12_CLEAR_FLAGS, _ Depth: FLOAT, _ Stencil: UINT8, _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.ClearDepthStencilView(pThis, DepthStencilView, ClearFlags, Depth, Stencil, NumRects, pRects)
     }
@@ -43,7 +43,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func ClearUnorderedAccessViewFloat(_ ViewGPUHandleInCurrentHeap: D3D12_GPU_DESCRIPTOR_HANDLE, _ ViewCPUHandle: D3D12_CPU_DESCRIPTOR_HANDLE, _ pResource: ID3D12Resource, _ Values: (FLOAT, FLOAT, FLOAT, FLOAT), _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>) throws {
+  public func ClearUnorderedAccessViewFloat(_ ViewGPUHandleInCurrentHeap: D3D12_GPU_DESCRIPTOR_HANDLE, _ ViewCPUHandle: D3D12_CPU_DESCRIPTOR_HANDLE, _ pResource: ID3D12Resource, _ Values: (FLOAT, FLOAT, FLOAT, FLOAT), _ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       var Values = Values
       withUnsafeBytes(of: &Values) {
@@ -70,19 +70,19 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func CopyTextureRegion(_ pDst: UnsafePointer<D3D12_TEXTURE_COPY_LOCATION>, _ DstX: UINT, _ DstY: UINT, _ DstZ: UINT, _ pSrc: UnsafePointer<D3D12_TEXTURE_COPY_LOCATION>, _ pSrcBox: UnsafePointer<D3D12_BOX>) throws {
+  public func CopyTextureRegion(_ pDst: UnsafePointer<D3D12_TEXTURE_COPY_LOCATION>?, _ DstX: UINT, _ DstY: UINT, _ DstZ: UINT, _ pSrc: UnsafePointer<D3D12_TEXTURE_COPY_LOCATION>?, _ pSrcBox: UnsafePointer<D3D12_BOX>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.CopyTextureRegion(pThis, pDst, DstX, DstY, DstZ, pSrc, pSrcBox)
     }
   }
 
-  public func CopyTiles(_ pTiledResource: ID3D12Resource, _ pTileRegionStartCoordinate: UnsafePointer<D3D12_TILED_RESOURCE_COORDINATE>, _ pTileRegionSize: UnsafePointer<D3D12_TILE_REGION_SIZE>, _ pBuffer: ID3D12Resource, _ BufferStartOffsetInBytes: UINT64, _ Flags: D3D12_TILE_COPY_FLAGS) throws {
+  public func CopyTiles(_ pTiledResource: ID3D12Resource, _ pTileRegionStartCoordinate: UnsafePointer<D3D12_TILED_RESOURCE_COORDINATE>?, _ pTileRegionSize: UnsafePointer<D3D12_TILE_REGION_SIZE>?, _ pBuffer: ID3D12Resource, _ BufferStartOffsetInBytes: UINT64, _ Flags: D3D12_TILE_COPY_FLAGS) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.CopyTiles(pThis, RawPointer(pTiledResource), pTileRegionStartCoordinate, pTileRegionSize, RawPointer(pBuffer), BufferStartOffsetInBytes, Flags)
     }
   }
 
-  public func DiscardResource(_ pResource: ID3D12Resource, _ pRegion: UnsafePointer<D3D12_DISCARD_REGION>) throws {
+  public func DiscardResource(_ pResource: ID3D12Resource, _ pRegion: UnsafePointer<D3D12_DISCARD_REGION>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.DiscardResource(pThis, RawPointer(pResource), pRegion)
     }
@@ -130,7 +130,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func IASetIndexBuffer(_ pView: UnsafePointer<D3D12_INDEX_BUFFER_VIEW>) throws {
+  public func IASetIndexBuffer(_ pView: UnsafePointer<D3D12_INDEX_BUFFER_VIEW>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.IASetIndexBuffer(pThis, pView)
     }
@@ -142,7 +142,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func IASetVertexBuffers(_ StartSlot: UINT, _ NumViews: UINT, _ pViews: UnsafePointer<D3D12_VERTEX_BUFFER_VIEW>) throws {
+  public func IASetVertexBuffers(_ StartSlot: UINT, _ NumViews: UINT, _ pViews: UnsafePointer<D3D12_VERTEX_BUFFER_VIEW>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.IASetVertexBuffers(pThis, StartSlot, NumViews, pViews)
     }
@@ -157,7 +157,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func OMSetRenderTargets(_ NumRenderTargetDescriptors: UINT, _ pRenderTargetDescriptors: UnsafePointer<D3D12_CPU_DESCRIPTOR_HANDLE>, _ RTsSingleHandleToDescriptorRange: WindowsBool, _ pDepthStencilDescriptor: UnsafePointer<D3D12_CPU_DESCRIPTOR_HANDLE>) throws {
+  public func OMSetRenderTargets(_ NumRenderTargetDescriptors: UINT, _ pRenderTargetDescriptors: UnsafePointer<D3D12_CPU_DESCRIPTOR_HANDLE>?, _ RTsSingleHandleToDescriptorRange: WindowsBool, _ pDepthStencilDescriptor: UnsafePointer<D3D12_CPU_DESCRIPTOR_HANDLE>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.OMSetRenderTargets(pThis, NumRenderTargetDescriptors, pRenderTargetDescriptors, RTsSingleHandleToDescriptorRange, pDepthStencilDescriptor)
     }
@@ -187,19 +187,19 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func ResourceBarrier(_ NumBarriers: UINT, _ pBarriers: UnsafePointer<D3D12_RESOURCE_BARRIER>) throws {
+  public func ResourceBarrier(_ NumBarriers: UINT, _ pBarriers: UnsafePointer<D3D12_RESOURCE_BARRIER>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.ResourceBarrier(pThis, NumBarriers, pBarriers)
     }
   }
 
-  public func RSSetScissorRects(_ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>) throws {
+  public func RSSetScissorRects(_ NumRects: UINT, _ pRects: UnsafePointer<D3D12_RECT>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.RSSetScissorRects(pThis, NumRects, pRects)
     }
   }
 
-  public func RSSetViewports(_ NumViewports: UINT, _ pViewports: UnsafePointer<D3D12_VIEWPORT>) throws {
+  public func RSSetViewports(_ NumViewports: UINT, _ pViewports: UnsafePointer<D3D12_VIEWPORT>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.RSSetViewports(pThis, NumViewports, pViewports)
     }
@@ -211,7 +211,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetComputeRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer, _ DestOffsetIn32BitValues: UINT) throws {
+  public func SetComputeRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer?, _ DestOffsetIn32BitValues: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetComputeRoot32BitConstants(pThis, RootParameterIndex, Num32BitValuesToSet, pSrcData, DestOffsetIn32BitValues)
     }
@@ -247,7 +247,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetDescriptorHeaps(_ NumDescriptorHeaps: UINT, _ ppDescriptorHeaps: UnsafePointer<UnsafeMutablePointer<WinSDK.ID3D12DescriptorHeap>?>) throws {
+  public func SetDescriptorHeaps(_ NumDescriptorHeaps: UINT, _ ppDescriptorHeaps: UnsafePointer<UnsafeMutablePointer<WinSDK.ID3D12DescriptorHeap>?>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetDescriptorHeaps(pThis, NumDescriptorHeaps, ppDescriptorHeaps)
     }
@@ -259,7 +259,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetGraphicsRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer, _ DestOffsetIn32BitValues: UINT) throws {
+  public func SetGraphicsRoot32BitConstants(_ RootParameterIndex: UINT, _ Num32BitValuesToSet: UINT, _ pSrcData: UnsafeRawPointer?, _ DestOffsetIn32BitValues: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetGraphicsRoot32BitConstants(pThis, RootParameterIndex, Num32BitValuesToSet, pSrcData, DestOffsetIn32BitValues)
     }
@@ -283,7 +283,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetGraphicsRootSignature(_ pRootSignature: ID3D12RootSignature) throws {
+  public func SetGraphicsRootSignature(_ pRootSignature: ID3D12RootSignature?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetGraphicsRootSignature(pThis, RawPointer(pRootSignature))
     }
@@ -295,13 +295,13 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SetMarker(_ Metadata: UINT, _ pData: UnsafeRawPointer, _ Size: UINT) throws {
+  public func SetMarker(_ Metadata: UINT, _ pData: UnsafeRawPointer?, _ Size: UINT) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetMarker(pThis, Metadata, pData, Size)
     }
   }
 
-  public func SetPipelineState(_ pPipelineState: ID3D12PipelineState) throws {
+  public func SetPipelineState(_ pPipelineState: ID3D12PipelineState?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SetPipelineState(pThis, RawPointer(pPipelineState))
     }
@@ -313,7 +313,7 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 
-  public func SOSetTargets(_ StartSlot: UINT, _ NumViews: UINT, _ pViews: UnsafePointer<D3D12_STREAM_OUTPUT_BUFFER_VIEW>) throws {
+  public func SOSetTargets(_ StartSlot: UINT, _ NumViews: UINT, _ pViews: UnsafePointer<D3D12_STREAM_OUTPUT_BUFFER_VIEW>?) throws {
     return try perform(as: WinSDK.ID3D12GraphicsCommandList.self) { pThis in
       pThis.pointee.lpVtbl.pointee.SOSetTargets(pThis, StartSlot, NumViews, pViews)
     }
