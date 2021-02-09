@@ -55,9 +55,26 @@ public func D3D12SerializeRootSignature(
   return (ID3DBlob(pUnk: pBlob), nil)
 }
 
-public func DXGIGetDebugInterface1<Interface: IUnknown>(_ Flags: UINT) throws -> Interface {
+public func DXGIGetDebugInterface1<Interface: IUnknown>(_ Flags: UINT)
+    throws -> Interface {
   var iid: IID = Interface.IID
   var pDebug: UnsafeMutableRawPointer?
   try CHECKED(DXGIGetDebugInterface1(Flags, &iid, &pDebug))
   return Interface(pUnk: pDebug)
+}
+
+public func D3DCompileFromFile(_ filename: String,
+                               _ defines: [D3D_SHADER_MACRO],
+                               _ include: UnsafeMutablePointer<WinSDK.ID3DInclude>?,
+                               _ entrypoint: String, _ target: String,
+                               _ Flags1: UINT, _ Flags2: UINT)
+    throws -> (ID3DBlob?, ID3DBlob?) {
+  var pCode: UnsafeMutablePointer<WinSDK.ID3DBlob>?
+  var pErrorMsgs: UnsafeMutablePointer<WinSDK.ID3DBlob>?
+  let pDefines: [D3D_SHADER_MACRO] =
+      defines + [D3D_SHADER_MACRO(Name: nil, Definition: nil)]
+  try CHECKED(D3DCompileFromFile(filename.wide, pDefines, include, entrypoint,
+                                 target, Flags1, Flags2, &pCode, &pErrorMsgs))
+  return (pCode == nil ? nil : ID3DBlob(pUnk: pCode),
+          pErrorMsgs == nil ? nil : ID3DBlob(pUnk: pErrorMsgs))
 }
