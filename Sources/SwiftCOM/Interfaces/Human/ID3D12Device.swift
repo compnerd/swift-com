@@ -333,4 +333,11 @@ extension ID3D12Device {
       try CreateDepthStencilView(pResource, pDesc, DestDescriptor)
     }
   }
+
+
+  public func CreateGraphicsPipelineState<PSO: IUnknown>(_ Desc: D3D12_GRAPHICS_PIPELINE_STATE_DESC) throws -> PSO {
+    var Desc = Desc
+    var iid: IID = PSO.IID
+    return try PSO(pUnk: CreateGraphicsPipelineState(&Desc, &iid))
+  }
 }
