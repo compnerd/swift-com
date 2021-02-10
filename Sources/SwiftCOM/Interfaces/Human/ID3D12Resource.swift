@@ -32,12 +32,11 @@ public class ID3D12Resource: ID3D12Pageable {
     }
   }
 
-  public func Map(_ Subresource: UINT, _ ReadRange: D3D12_RANGE) throws
+  public func Map(_ Subresource: UINT, _ pReadRange: UnsafePointer<D3D12_RANGE>?) throws
       -> UnsafeMutableRawPointer? {
     return try perform(as: WinSDK.ID3D12Resource.self) { pThis in
       var pData: UnsafeMutableRawPointer?
-      var ReadRange = ReadRange
-      try CHECKED(pThis.pointee.lpVtbl.pointee.Map(pThis, Subresource, &ReadRange, &pData))
+      try CHECKED(pThis.pointee.lpVtbl.pointee.Map(pThis, Subresource, pReadRange, &pData))
       return pData
     }
   }
@@ -53,10 +52,9 @@ public class ID3D12Resource: ID3D12Pageable {
     }
   }
 
-  public func Unmap(_ Subresource: UINT, _ WrittenRange: D3D12_RANGE) throws {
+  public func Unmap(_ Subresource: UINT, _ pWrittenRange: UnsafePointer<D3D12_RANGE>?) throws {
     return try perform(as: WinSDK.ID3D12Resource.self) { pThis in
-      var WrittenRange = WrittenRange
-      pThis.pointee.lpVtbl.pointee.Unmap(pThis, Subresource, &WrittenRange)
+      pThis.pointee.lpVtbl.pointee.Unmap(pThis, Subresource, pWrittenRange)
     }
   }
 
@@ -68,5 +66,18 @@ public class ID3D12Resource: ID3D12Pageable {
       var DstBox = DstBox
       try CHECKED(pThis.pointee.lpVtbl.pointee.WriteToSubresource(pThis, DstSubresource, &DstBox, pSrcData, SrcRowPitch, SrcDepthPitch))
     }
+  }
+}
+
+extension ID3D12Resource {
+  public func Map(_ Subresource: UINT, _ ReadRange: D3D12_RANGE) throws
+      -> UnsafeMutableRawPointer? {
+    var ReadRange = ReadRange
+    return try Map(Subresource, &ReadRange)
+  }
+
+  public func Unmap(_ Subresource: UINT, _ WrittenRange: D3D12_RANGE) throws {
+    var WrittenRange = WrittenRange
+    return try Unmap(Subresource, &WrittenRange)
   }
 }
