@@ -26,11 +26,9 @@ public class IDXGISwapChain: IDXGIObject {
     }
   }
 
-  public func GetDesc() throws -> DXGI_SWAP_CHAIN_DESC {
+  public func GetDesc(_ pDesc: UnsafeMutablePointer<DXGI_SWAP_CHAIN_DESC>) throws {
     return try perform(as: WinSDK.IDXGISwapChain.self) { pThis in
-      var Desc: DXGI_SWAP_CHAIN_DESC = DXGI_SWAP_CHAIN_DESC()
-      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDesc(pThis, &Desc))
-      return Desc
+      try CHECKED(pThis.pointee.lpVtbl.pointee.GetDesc(pThis, pDesc))
     }
   }
 
@@ -88,5 +86,11 @@ extension IDXGISwapChain {
   public func GetBuffer<Resource: IUnknown>(_ Buffer: UINT) throws -> Resource {
     var iid: IID = Resource.IID
     return try Resource(pUnk: GetBuffer(Buffer, &iid))
+  }
+
+  public func GetDesc() throws -> DXGI_SWAP_CHAIN_DESC {
+    var Desc: DXGI_SWAP_CHAIN_DESC = DXGI_SWAP_CHAIN_DESC()
+    try GetDesc(&Desc)
+    return Desc
   }
 }
