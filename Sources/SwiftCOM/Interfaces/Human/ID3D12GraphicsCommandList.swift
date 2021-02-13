@@ -319,3 +319,11 @@ public class ID3D12GraphicsCommandList: ID3D12CommandList {
     }
   }
 }
+
+extension ID3D12GraphicsCommandList {
+  public func SetDescriptorHeaps(_ heaps: [ID3D12DescriptorHeap]) throws {
+    var pHeaps: [UnsafeMutablePointer<WinSDK.ID3D12DescriptorHeap>?] =
+        heaps.map { RawPointer($0) }
+    return try SetDescriptorHeaps(UINT(pHeaps.count), &pHeaps)
+  }
+}

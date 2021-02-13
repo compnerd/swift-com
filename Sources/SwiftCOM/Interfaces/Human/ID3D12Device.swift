@@ -340,4 +340,9 @@ extension ID3D12Device {
     var iid: IID = PSO.IID
     return try PSO(pUnk: CreateGraphicsPipelineState(&Desc, &iid))
   }
+
+  public func CreateConstantBufferView(_ Desc: D3D12_CONSTANT_BUFFER_VIEW_DESC, _ DestDescriptor: D3D12_CPU_DESCRIPTOR_HANDLE) throws {
+    var Desc = Desc
+    return try CreateConstantBufferView(&Desc, DestDescriptor)
+  }
 }
