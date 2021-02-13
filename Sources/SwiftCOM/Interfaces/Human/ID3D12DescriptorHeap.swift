@@ -45,7 +45,27 @@ public class ID3D12DescriptorHeap: ID3D12Pageable {
   public func GetGPUDescriptorHandleForHeapStart() throws
       -> D3D12_GPU_DESCRIPTOR_HANDLE {
     return try perform(as: WinSDK.ID3D12DescriptorHeap.self) { pThis in
-      return pThis.pointee.lpVtbl.pointee.GetGPUDescriptorHandleForHeapStart(pThis)
+      var hDescriptor: D3D12_GPU_DESCRIPTOR_HANDLE = D3D12_GPU_DESCRIPTOR_HANDLE()
+
+      // NOTE(compnerd) workaround the signature mismatch in the header:
+      // The headers declares the signature as:
+      //
+      // D3D12_GPU_DESCRIPTOR_HANDLE (STDMETHODCALLTYPE *GetGPUDescriptorHandleForHeapStart)(ID3D12DescriptorHeap * This);
+      //
+      // However, this results in a runtime failure, with an unexpected
+      // dereference of a second paramter.  The C++ implementation of
+      // `ID3D12DescriptionHeap` performs NVRO, and so we must change the
+      // signature in order to match the ABI.  The correct signature is:
+      //
+      // void (STDMETHODCALLTYPE *GetGPUDescriptorHandleForHeapStart)(ID3D12DescriptorHeap *This, D3D12_GPU_DESCRIPTOR_HANDLE *pOut);
+      typealias GetGPUDescriptorHandleForHeapStartABI = @convention(c)
+      (UnsafeMutablePointer<WinSDK.ID3D12DescriptorHeap>?, UnsafeMutablePointer<D3D12_GPU_DESCRIPTOR_HANDLE>?) -> Void
+      let pGetGPUDescriptorHandleForHeapStart: GetGPUDescriptorHandleForHeapStartABI =
+          unsafeBitCast(pThis.pointee.lpVtbl.pointee.GetGPUDescriptorHandleForHeapStart,
+                        to: GetGPUDescriptorHandleForHeapStartABI.self)
+      pGetGPUDescriptorHandleForHeapStart(pThis, &hDescriptor)
+
+      return hDescriptor
     }
   }
 }
