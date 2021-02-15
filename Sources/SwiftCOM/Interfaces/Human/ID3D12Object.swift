@@ -41,8 +41,14 @@ public class ID3D12Object: IUnknown {
 }
 
 extension ID3D12Object {
-  public func SetPrivateData(_ guid: REFGUID,
-                             _ pData: UnsafeRawBufferPointer?) throws {
-    try self.SetPrivateData(guid, UINT(pData?.count ?? 0), pData?.baseAddress)
+  public func GetPrivateData(_ guid: GUID, _ DataSize: inout UINT, _ pData: inout UnsafeMutableRawPointer) throws {
+    var guid = guid
+    try self.GetPrivateData(&guid, &DataSize, &pData)
+  }
+
+  public func SetPrivateData(_ guid: GUID, _ DataSize: UINT,
+                             _ pData: UnsafeRawPointer?) throws {
+    var guid = guid
+    try self.SetPrivateData(&guid, DataSize, pData)
   }
 }
