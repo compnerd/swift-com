@@ -326,4 +326,10 @@ extension ID3D12GraphicsCommandList {
         heaps.map { RawPointer($0) }
     return try SetDescriptorHeaps(UINT(pHeaps.count), &pHeaps)
   }
+
+  public func ResourceBarrier(_ NumBarriers: UINT,
+                              _ Barrier: D3D12_RESOURCE_BARRIER) throws {
+    var Barrier = Barrier
+    return try ResourceBarrier(NumBarriers, &Barrier)
+  }
 }
