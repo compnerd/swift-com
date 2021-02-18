@@ -345,4 +345,14 @@ extension ID3D12Device {
     var Desc = Desc
     return try CreateConstantBufferView(&Desc, DestDescriptor)
   }
+
+  public func CheckFeatureSupport<ResultType>(_ Feature: D3D12_FEATURE) throws -> ResultType {
+    var result: ResultType!
+    try CheckFeatureSupport(Feature, &result, UINT(MemoryLayout<ResultType>.size))
+    return result
+  }
+
+  public func CheckFeatureSupport<ResultType>(_ Feature: D3D12_FEATURE, _ Result: inout ResultType) throws {
+    try CheckFeatureSupport(Feature, &Result, UINT(MemoryLayout.size(ofValue: Result)))
+  }
 }
