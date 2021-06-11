@@ -24,7 +24,9 @@ jobs:
     - name: Install ${{ matrix.tag }}
       run: |
         Install-Binary -Url "https://swift.org/builds/${{ matrix.branch }}/windows10/swift-${{ matrix.tag }}/swift-${{ matrix.tag }}-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
-        refreshenv
+    - name: Print Environment
+      run: |
+        Get-ChildItem -Path ENV:
     - name: Set Environment Variables
       if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
