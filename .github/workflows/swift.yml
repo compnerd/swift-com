@@ -26,7 +26,7 @@ jobs:
         Install-Binary -Url "https://swift.org/builds/${{ matrix.branch }}/windows10/swift-${{ matrix.tag }}/swift-${{ matrix.tag }}-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
     - name: Print Environment
       run: |
-        Get-ChildItem -Path ENV:
+        Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
     - name: Set Environment Variables
       if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
