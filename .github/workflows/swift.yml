@@ -24,13 +24,14 @@ jobs:
     - name: Install ${{ matrix.tag }}
       run: |
         Install-Binary -Url "https://swift.org/builds/${{ matrix.branch }}/windows10/swift-${{ matrix.tag }}/swift-${{ matrix.tag }}-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
+        refreshenv
     - name: Set Environment Variables
-      # if: ${{ matrix.branch == 'swift-5.4-branch' }}
+      if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
         echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Adjust Paths
-      # if: ${{ matrix.branch == 'swift-5.4-branch' }}
+      if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
         echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
