@@ -18,60 +18,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: seanmiddleditch/gha-setup-vsdevenv@master
-      if: ${{ matrix.branch == 'swift-5.4-branch' }}
 
     - name: Install ${{ matrix.tag }}
       run: |
         Install-Binary -Url "https://swift.org/builds/${{ matrix.branch }}/windows10/swift-${{ matrix.tag }}/swift-${{ matrix.tag }}-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
-    - name: Print Environment
-      run: |
-        Get-Item 'HKCU:\Environment'
-        $refreshDesktopSource = @'
-            private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
-            private const int WM_SETTINGCHANGE = 0x1a;
-            private const int SMTO_ABORTIFHUNG = 0x0002;
-
-            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-            static extern bool SendNotifyMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
-            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-            private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, IntPtr lpdwResult);
-
-            [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-            private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
-
-            public static void Refresh()
-            {
-              // Update desktop icons
-              SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
-              // Update environment variables
-              SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, null, SMTO_ABORTIFHUNG, 100, IntPtr.Zero);
-            }
-        '@
-        If (-not ([System.Management.Automation.PSTypeName]'MyWinAPI.Explorer').Type) {
-          Add-Type -MemberDefinition $refreshDesktopSource -Namespace MyWinAPI -Name Explorer -Language CSharp -IgnoreWarnings -ErrorAction 'Stop'
-        }
-        [MyWinAPI.Explorer]::Refresh()
-        Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
-        Get-Item 'HKCU:\Environment'
     - name: Set Environment Variables
-      if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
         echo "SDKROOT=C:\Library\Developer\Platforms\Windows.platform\Developer\SDKs\Windows.sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "DEVELOPER_DIR=C:\Library\Developer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Adjust Paths
-      if: ${{ matrix.branch == 'swift-5.4-branch' }}
       run: |
         echo "C:\Library\Swift-development\bin;C:\Library\icu-67\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "C:\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: Install Supporting Files
-      if: ${{ matrix.branch == 'swift-5.4-branch' }}
-      run: |
-        Copy-Item "$env:SDKROOT\usr\share\ucrt.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\ucrt\module.modulemap"
-        Copy-Item "$env:SDKROOT\usr\share\visualc.modulemap" -destination "$env:VCToolsInstallDir\include\module.modulemap"
-        Copy-Item "$env:SDKROOT\usr\share\visualc.apinotes" -destination "$env:VCToolsInstallDir\include\visualc.apinotes"
-        Copy-Item "$env:SDKROOT\usr\share\winsdk.modulemap" -destination "$env:UniversalCRTSdkDir\Include\$env:UCRTVersion\um\module.modulemap"
 
     - name: Build
       run: swift build -v
