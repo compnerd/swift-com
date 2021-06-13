@@ -34,8 +34,8 @@ jobs:
         }
 
         Install-Binary -Url "https://swift.org/builds/${{ matrix.branch }}/windows10/swift-${{ matrix.tag }}/swift-${{ matrix.tag }}-windows10.exe" -Name "installer.exe" -ArgumentList ("-q")
-        [Environment]::GetEnvironmentVariables("Machine")
         Update-EnvironmentVariables
+        echo "$env:Path" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build
       run: swift build -v
