@@ -14,6 +14,10 @@ let SwiftCOM = Package(
         .linkedLibrary("Ole32"),
         .linkedLibrary("PortableDeviceGuids"),
       ]
-    )
+    ),
+    .testTarget(
+      name: "SwiftCOMTests",
+      dependencies: ["SwiftCOM"]
+    ),
   ]
 )
