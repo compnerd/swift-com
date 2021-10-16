@@ -12,7 +12,9 @@ public class ID3D12Heap: ID3D12Pageable {
 
   public func GetDesc() throws -> D3D12_HEAP_DESC {
     return try perform(as: WinSDK.ID3D12Heap.self) { pThis in
-      return pThis.pointee.lpVtbl.pointee.GetDesc(pThis)
+      var desc: D3D12_HEAP_DESC = D3D12_HEAP_DESC()
+      let _ = pThis.pointee.lpVtbl.pointee.GetDesc(pThis, &desc)
+      return desc
     }
   }
 }
