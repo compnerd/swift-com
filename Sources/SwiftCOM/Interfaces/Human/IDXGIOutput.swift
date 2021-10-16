@@ -31,7 +31,6 @@ public class IDXGIOutput: IDXGIObject {
       var NumModes: UINT = 0
       try CHECKED(pThis.pointee.lpVtbl.pointee.GetDisplayModeList(pThis, EnumFormat, Flags, &NumModes, nil))
       return try Array<DXGI_MODE_DESC>(unsafeUninitializedCapacity: Int(NumModes)) {
-        var NumModes: UINT = 0
         try CHECKED(pThis.pointee.lpVtbl.pointee.GetDisplayModeList(pThis, EnumFormat, Flags, &NumModes, $0.baseAddress))
         $1 = Int(NumModes)
       }
