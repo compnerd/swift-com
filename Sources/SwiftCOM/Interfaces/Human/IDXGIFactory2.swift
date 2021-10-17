@@ -1,9 +1,5 @@
-/**
- * Copyright 2021 Saleem Abdulrasool <compnerd@compnerd.org>
- * All Rights Reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- **/
+// Copyright 2021 Saleem Abdulrasool <compnerd@compnerd.org>. All Rights Reserved.
+// SPDX-License-Identifier: BSD-3-Clause
 
 import WinSDK
 
