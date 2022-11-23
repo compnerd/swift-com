@@ -188,9 +188,7 @@ public class ID3D12Device: ID3D12Object {
 
   public func GetAdapterLuid() throws -> LUID {
     return try perform(as: WinSDK.ID3D12Device.self) { pThis in
-      var luid: LUID = LUID()
-      let _ = pThis.pointee.lpVtbl.pointee.GetAdapterLuid(pThis, &luid)
-      return luid
+      pThis.pointee.lpVtbl.pointee.GetAdapterLuid(pThis)
     }
   }
 
@@ -207,9 +205,7 @@ public class ID3D12Device: ID3D12Object {
 
   public func GetCustomHeapProperties(_ nodeMask: UINT, _ heapType: D3D12_HEAP_TYPE) throws -> D3D12_HEAP_PROPERTIES {
     return try perform(as: WinSDK.ID3D12Device.self) { pThis in
-      var properties: D3D12_HEAP_PROPERTIES = D3D12_HEAP_PROPERTIES()
-      let _ = pThis.pointee.lpVtbl.pointee.GetCustomHeapProperties(pThis, &properties, nodeMask, heapType)
-      return properties
+      pThis.pointee.lpVtbl.pointee.GetCustomHeapProperties(pThis, nodeMask, heapType)
     }
   }
 
@@ -233,9 +229,7 @@ public class ID3D12Device: ID3D12Object {
 
   public func GetResourceAllocationInfo(_ visibleMask: UINT, numResourceDescs: UINT, _ pResourceDescs: UnsafePointer<D3D12_RESOURCE_DESC>?) throws -> D3D12_RESOURCE_ALLOCATION_INFO {
     return try perform(as: WinSDK.ID3D12Device.self) { pThis in
-      var info: D3D12_RESOURCE_ALLOCATION_INFO = D3D12_RESOURCE_ALLOCATION_INFO()
-      let _ = pThis.pointee.lpVtbl.pointee.GetResourceAllocationInfo(pThis, &info, visibleMask, numResourceDescs, pResourceDescs)
-      return info
+      pThis.pointee.lpVtbl.pointee.GetResourceAllocationInfo(pThis, visibleMask, numResourceDescs, pResourceDescs)
     }
   }
 
