@@ -46,9 +46,7 @@ public class ID3D12CommandQueue: ID3D12Pageable {
 
   public func GetDesc() throws -> D3D12_COMMAND_QUEUE_DESC {
     return try perform(as: WinSDK.ID3D12CommandQueue.self) { pThis in
-      var desc: D3D12_COMMAND_QUEUE_DESC = D3D12_COMMAND_QUEUE_DESC()
-      desc = pThis.pointee.lpVtbl.pointee.GetDesc(pThis)
-      return desc
+      pThis.pointee.lpVtbl.pointee.GetDesc(pThis)
     }
   }
 
