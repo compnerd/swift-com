@@ -20,6 +20,7 @@ private func ==<T: Equatable>(_ lhs: (T, T, T, T, T, T, T, T),
          lhs.7 == rhs.7
 }
 
+@_disfavoredOverload
 internal func ==(_ lhs: _GUID, _ rhs: _GUID) -> Bool {
   return lhs.Data1 == rhs.Data1 &&
          lhs.Data2 == rhs.Data2 &&
