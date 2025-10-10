@@ -13,17 +13,19 @@ jobs:
     strategy:
       matrix:
         include:
-          - branch: swift-5.5-branch
-            tag: 5.5-DEVELOPMENT-SNAPSHOT-2021-06-02-a
+          - branch: development
+            tag: DEVELOPMENT-SNAPSHOT-2025-09-14-a
 
     steps:
     - uses: compnerd/gha-setup-swift@main
       with:
-        tag: ${{ matrix.tag }}
-        branch: ${{ matrix.branch }}
+        swift-build: ${{ matrix.tag }}
+        swift-version: ${{ matrix.branch }}
 
     - uses: actions/checkout@v2
+
     - name: Build
       run: swift build
+
     - name: Run tests
       run: swift test
