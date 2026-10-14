@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import WinSDK
+#if compiler(>=6.5)
+import WinSDK.UM.DirectX
+#else
 import WinSDK.DirectX
+#endif
 
 public class ID3D12VersionedRootSignatureDeserializer: IUnknown {
   override public class var IID: IID { IID_ID3D12VersionedRootSignatureDeserializer }
